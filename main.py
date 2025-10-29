@@ -1,15 +1,9 @@
 import pygame
-from textbox import Textbox
-pygame.init()
-HEIGHT = 640
 WIDTH = 820
-
+HEIGHT = 640
 class Main:
     def __init__(self):
-        self.window = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.images = {}
-        self.fonts = {"areal":pygame.font.SysFont("Areal",20)}
-        self.textbox = Textbox((0,0),"0oooogofgodgfdfgsdfg",3,self.fonts["areal"])
+        self.window = pygame.display.set_mode((WIDTH,HEIGHT))
     
     def run(self):
         while True:
@@ -17,9 +11,7 @@ class Main:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-            self.textbox.sayText()
-            self.textbox.update()
-            self.textbox.drawText(self.window)
+            
             pygame.display.update()
 
 if __name__ == "__main__":
