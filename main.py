@@ -14,6 +14,7 @@ class Main:
                        "engine2":loadImage("carparts/engine2.png",0.5),
                        "engine3":loadImage("carparts/engine3.png",0.5),
                        "front1":loadImage("carparts/front1.png",0.5),
+                       "front2":loadImage("carparts/front2.png",0.5),
                        "wheel1":loadImage("carparts/wheel1.png",0.5)}
         self.rob = Rob(CENTER_POS,(30,30),self.images,self)
         self.game = Game(self,self.window)
