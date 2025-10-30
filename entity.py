@@ -36,7 +36,7 @@ class Dragable(Entity):
     def __init__(self, centerPos, hitboxSize, images, snaprect, game):
         super().__init__(centerPos, hitboxSize, images, game)
         self.snaprect = snaprect
-    
+        self.isDraged = False
     def snapToCenter(self):
         if self.getImageRect().colliderect(self.snaprect):
             self.setPos(self.snaprect.center)
@@ -44,16 +44,19 @@ class Dragable(Entity):
     def update(self):
         super().update()
         mousePos = pygame.mouse.get_pos()
-        isDraged = False
         mouseDown = self.game.main.inputs["mouseDown"]
-        if mouseDown:
-            if self.hitbox.collidepoint(mousePos):
-                isDraged = True
-                self.setPos(mousePos)
-        
-        
-        if not isDraged:   
-            self.snapToCenter()
+        if self.game.draging == None or self.game.draging == self:
+            if mouseDown:
+                if self.hitbox.collidepoint(mousePos):
+                    self.isDraged = True
+                
+                if self.isDraged:
+                    self.setPos(mousePos)
+            else:
+                self.isDraged = False
+            
+            if not self.isDraged:   
+                self.snapToCenter()
 
 class Rob(Entity):
     def __init__(self, centerPos, hitboxSize, images, game):
