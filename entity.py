@@ -15,7 +15,10 @@ class Entity:
         self.pos.x = newX
         self.pos.y = newY
         self.hitbox.center = (newX, newY)
-    
+    def getHitbox(self):
+        rect = self.hitbox
+        rect.center = self.pos
+        return rect
     def getImageRect(self):
         rect = self.images[self.image].get_rect()
         rect.center = self.pos
@@ -33,13 +36,16 @@ class Entity:
 
 
 class Dragable(Entity):
-    def __init__(self, centerPos, hitboxSize, images, snaprect, game):
+    def __init__(self, centerPos, hitboxSize, images, snaprects, game):
         super().__init__(centerPos, hitboxSize, images, game)
-        self.snaprect = snaprect
+        self.snaprects = snaprects
         self.isDraged = False
     def snapToCenter(self):
-        if self.getImageRect().colliderect(self.snaprect):
-            self.setPos(self.snaprect.center)
+        for snaprect in self.snaprects:
+            
+            if self.getHitbox().colliderect(snaprect):
+                self.setPos(snaprect.center)
+                break
     
     def update(self):
         super().update()

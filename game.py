@@ -8,17 +8,20 @@ class Game:
         self.main = main
         self.window = display
         self.snaprect1 = pygame.rect.Rect(250,250,40,40)
-        self.thing = Dragable((200,200), (20,20), self.main.images, self.snaprect1, self)
+        self.thing = Dragable((200,200), (20,20), self.main.images, [self.snaprect1], self)
         self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
-        self.snaprects = {"engine":pygame.rect.Rect(CENTER_POS[0],CENTER_POS[1],100,100),
-                          "back":pygame.rect.Rect(CENTER_POS[0]-75,CENTER_POS[1],100,100),
-                         "front":pygame.rect.Rect(CENTER_POS[0]+75,CENTER_POS[1]-20,100,100),
-                         "wheel":pygame.rect.Rect(CENTER_POS[0]-100,CENTER_POS[1]+50,100,100)}
         
-        self.spawnCarparts((10,10),"engine",(75,75))
-        self.spawnCarparts((10,10),"back",(100,100))
-        self.spawnCarparts((10,10),"front",(100,100))
-        self.spawnCarparts((10,10),"wheel",(50,50))
+        carCenterX, carCenterY = CENTER_POS
+        self.snaprects = {"engine":[pygame.rect.Rect(carCenterX,carCenterY,100,100)],
+                          "back":[pygame.rect.Rect(carCenterX-75,carCenterY,100,100)],
+                         "front":[pygame.rect.Rect(carCenterX+75,carCenterY,100,100)],
+                         "wheel":[pygame.rect.Rect(carCenterX-80,carCenterY+90,100,100),pygame.rect.Rect(carCenterX+75,carCenterY+90,100,100)]}
+        
+        self.spawnCarparts((100,100),"engine",(75,75))
+        self.spawnCarparts((100,100),"back",(100,100))
+        self.spawnCarparts((100,100),"front",(100,100))
+        self.spawnCarparts((100,100),"wheel",(50,50))
+        self.spawnCarparts((100,100),"wheel",(50,50))
         self.draging = None
     def spawnCarparts(self, pos, partType,hitboxSize):
         for i in range(1,100):
@@ -55,7 +58,8 @@ class Game:
         pygame.draw.rect(self.window,(100,100,100),self.snaprect1)
         self.thing.render(self.window, True)
         for carpartType in self.carparts:
-                pygame.draw.rect(self.window,(20,220,100),self.snaprects[carpartType])
+            for snaprects in self.snaprects[carpartType]:
+                pygame.draw.rect(self.window,(20,220,100),snaprects)
         for carpartType in self.carparts:
             self.renderEntList(self.carparts[carpartType],self.window)
         if self.draging:
