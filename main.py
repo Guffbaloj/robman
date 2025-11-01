@@ -19,6 +19,7 @@ class Main:
         self.rob = Rob(CENTER_POS,(30,30),self.images,self)
         self.game = Game(self,self.window)
         self.inputs = {"mouseDown":False}
+        self.clock = pygame.time.Clock()
     def run(self):
         while True:
             
@@ -36,6 +37,7 @@ class Main:
                     if event.button == 1:
                         self.inputs["mouseDown"] = False
             self.game.run()
+            self.clock.tick(FPS)
             
 
 if __name__ == "__main__":

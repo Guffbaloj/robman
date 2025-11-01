@@ -43,27 +43,39 @@ class Game:
         for item in list:
             if not item == self.draging:
                 item.render(display)
+    
+    def manageDraging(self):
+        for carpartType in self.carparts:
+            for carpart in self.carparts[carpartType]:
+                if carpart.isDraged:
+                    self.draging = carpart
+        if self.draging:
+            self.draging.render(self.window)
+    def updateAll(self):
+        
     def run(self):
         self.window.fill((255,255,255))
         self.thing.update()
         self.draging = None
 
-        for carpartType in self.carparts:
-            for carpart in self.carparts[carpartType]:
-                if carpart.isDraged:
-                    self.draging = carpart
-                
+        
+        self.manageDraging()
+        self.thing.glideToPos((300,300),4)      
         for carpartType in self.carparts:
             self.updateEntList(self.carparts[carpartType])
+        
         pygame.draw.rect(self.window,(100,100,100),self.snaprect1)
+        
         self.thing.render(self.window, True)
+        
         for carpartType in self.carparts:
             for snaprects in self.snaprects[carpartType]:
                 pygame.draw.rect(self.window,(20,220,100),snaprects)
+        
         for carpartType in self.carparts:
             self.renderEntList(self.carparts[carpartType],self.window)
-        if self.draging:
-            self.draging.render(self.window)
+        
+        
         
         
 

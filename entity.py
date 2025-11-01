@@ -1,5 +1,5 @@
 import pygame
-from utils import loadImage
+from utils import *
 class Entity:
     def __init__(self, centerPos,hitboxSize,images, game):
         self.game = game
@@ -9,7 +9,18 @@ class Entity:
         self.timer = 0
         self.hitbox = pygame.rect.Rect(0,0,hitboxSize[0],hitboxSize[1])
         self.hitbox.center = centerPos
-
+        self.targetPos = None
+        self.velocity = None
+    def glideToPos(self, newPos, time):
+        newTarget = pygame.math.Vector2(newPos)
+        if self.targetPos != newTarget:
+            self.targetPos = newTarget 
+            dX = newPos[0] - self.pos.x
+            dY = newPos[1] - self.pos.y
+            
+            xStep = dX/(time*FPS)
+            yStep = dY/(time*FPS)
+            self.velocity = pygame.math.Vector2(xStep,yStep)
     def setPos(self,newPos):
         newX, newY = newPos
         self.pos.x = newX
@@ -25,7 +36,8 @@ class Entity:
         return rect
     
     def update(self):
-        ...
+        if self.velocity:
+            self.pos + self.velocity
     
     def render(self, display, showHitbox = False):
         image = self.images[self.image]

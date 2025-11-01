@@ -4,6 +4,7 @@ BASE_PATH = "images/"
 WIDTH = 820
 HEIGHT = 640
 CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)
+FPS = 60
 
 def loadImage(path, size = 1):
     image = pygame.image.load(BASE_PATH+path)
