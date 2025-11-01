@@ -52,7 +52,7 @@ class Game:
         if self.draging:
             self.draging.render(self.window)
     def updateAll(self):
-        
+        ...
     def run(self):
         self.window.fill((255,255,255))
         self.thing.update()
