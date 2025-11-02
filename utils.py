@@ -6,6 +6,10 @@ HEIGHT = 640
 CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)
 FPS = 60
 
+#alla possitioner rob glider till under speletts långa gång
+ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
+ROB_CORNER = (WIDTH-100,HEIGHT-30)
+
 def loadImage(path, size = 1):
     image = pygame.image.load(BASE_PATH+path)
     image.convert_alpha()

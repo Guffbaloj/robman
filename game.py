@@ -73,7 +73,7 @@ class Game:
     
     def runIntro(self):         
         if self.introState == "start":
-            self.rob.setPos((-100,500))
+            self.rob.setPos(ROB_SIDE_ENTRANCE)
             self.introState = "rob glide in"
         
         elif self.introState == "rob glide in": 
@@ -92,8 +92,13 @@ class Game:
                     self.lastTalkIndex = self.rob.talkIndex
                 
             else:
+                self.introState = "rob glide away"
+        elif self.introState == "rob glide away":
+            self.rob.glideToPos(ROB_CORNER,3)   
+            if self.rob.targetPos == self.rob.pos:
                 self.introState = "start game"
-
+                self.rob.talkIndex = 0
+                self.lastTalkIndex = None
         elif self.introState == "start game":
             self.spawnCarparts((100,100),"engine",(75,75))
             self.spawnCarparts((100,100),"back",(100,100))
