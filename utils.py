@@ -12,3 +12,8 @@ def loadImage(path, size = 1):
     height, width = image.get_size()
     image = pygame.transform.scale(image,(height*size, width*size))
     return image
+
+def pygameQuitEvent():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()

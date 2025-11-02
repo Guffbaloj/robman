@@ -16,20 +16,24 @@ class Main:
                        "front1":loadImage("carparts/front1.png",0.5),
                        "front2":loadImage("carparts/front2.png",0.5),
                        "wheel1":loadImage("carparts/wheel1.png",0.5)}
-        self.rob = Rob(CENTER_POS,(30,30),self.images,self)
+        
         self.game = Game(self,self.window)
-        self.inputs = {"mouseDown":False}
+        self.inputs = {"mouseDown":False,
+                        "space":False}
         self.clock = pygame.time.Clock()
+        self.justPressed = None
     def run(self):
         while True:
-            
+            self.justPressed = None
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 if event.type == pygame.KEYDOWN:
-                    ...
+                    if event.key == pygame.K_SPACE:
+                        self.inputs ["space"] = True
+                        self.justPressed = "space"
                 if event.type == pygame.KEYUP:
-                    ...
+                        self.inputs ["space"] = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.inputs["mouseDown"] = True

@@ -1,5 +1,6 @@
 import pygame
 from utils import *
+from dialog import robCarIntro
 from random import randrange
 from entity import *
 
@@ -17,12 +18,12 @@ class Game:
                          "front":[pygame.rect.Rect(carCenterX+75,carCenterY,100,100)],
                          "wheel":[pygame.rect.Rect(carCenterX-80,carCenterY+90,100,100),pygame.rect.Rect(carCenterX+75,carCenterY+90,100,100)]}
         
-        self.spawnCarparts((100,100),"engine",(75,75))
-        self.spawnCarparts((100,100),"back",(100,100))
-        self.spawnCarparts((100,100),"front",(100,100))
-        self.spawnCarparts((100,100),"wheel",(50,50))
-        self.spawnCarparts((100,100),"wheel",(50,50))
+        
         self.draging = None
+        self.rob = Rob((0,400),(100,100),self.main.images,self)
+        self.gameState = "intro" #intro, game, end
+        self.introState = "start"
+        self.lastTalkIndex = None
     def spawnCarparts(self, pos, partType,hitboxSize):
         for i in range(1,100):
             key = partType + str(i)
@@ -53,7 +54,7 @@ class Game:
             self.draging.render(self.window)
     def updateAll(self):
         self.thing.update()
-        self.thing.glideToPos((300,300),4)
+        self.rob.update()
         for carpartType in self.carparts:
             self.updateEntList(self.carparts[carpartType])
     def renderAll(self):
@@ -66,12 +67,51 @@ class Game:
         self.thing.render(self.window, True)
         for carpartType in self.carparts:
             self.renderEntList(self.carparts[carpartType],self.window)
-            
+        self.rob.render(self.window)
+        if self.draging:
+            self.draging.render(self.window)
+    
+    def runIntro(self):         
+        if self.introState == "start":
+            self.rob.setPos((-100,500))
+            self.introState = "rob glide in"
+        
+        elif self.introState == "rob glide in": 
+            self.rob.glideToPos(CENTER_POS,3)   
+            if self.rob.targetPos == self.rob.pos:
+                self.introState = "rob talk"
+                self.rob.talkIndex = 0
+                self.lastTalkIndex = None
+        
+        elif self.introState == "rob talk":
+            if self.main.justPressed == "space":
+                self.rob.talkIndex += 1
+            if len(robCarIntro) > self.rob.talkIndex:
+                if not self.rob.talkIndex == self.lastTalkIndex:
+                    print(robCarIntro[self.rob.talkIndex])
+                    self.lastTalkIndex = self.rob.talkIndex
+                
+            else:
+                self.introState = "start game"
+
+        elif self.introState == "start game":
+            self.spawnCarparts((100,100),"engine",(75,75))
+            self.spawnCarparts((100,100),"back",(100,100))
+            self.spawnCarparts((100,100),"front",(100,100))
+            self.spawnCarparts((100,100),"wheel",(50,50))
+            self.spawnCarparts((100,100),"wheel",(50,50))
+            self.gameState = "game"
+
     def run(self):
         self.window.fill((255,255,255))
-        self.manageDraging()
-        self.updateAll()  
-        pygame.draw.rect(self.window,(100,100,100),self.snaprect1)
-        self.renderAll()
+        if self.gameState == "intro":
+            self.runIntro()
+        elif self.gameState == "game":
+            self.manageDraging()
         
+        self.updateAll()
+        self.renderAll()
+        pygame.draw.rect(self.window,(100,100,100),self.snaprect1)
+            
+            
         pygame.display.update()

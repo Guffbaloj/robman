@@ -1,4 +1,5 @@
 import pygame
+import math
 from utils import *
 class Entity:
     def __init__(self, centerPos,hitboxSize,images, game):
@@ -13,6 +14,7 @@ class Entity:
         self.velocity = None
     def glideToPos(self, newPos, time):
         newTarget = pygame.math.Vector2(newPos)
+       
         if self.targetPos != newTarget:
             self.targetPos = newTarget 
             dX = newPos[0] - self.pos.x
@@ -21,6 +23,8 @@ class Entity:
             xStep = dX/(time*FPS)
             yStep = dY/(time*FPS)
             self.velocity = pygame.math.Vector2(xStep,yStep)
+            
+        
     def setPos(self,newPos):
         newX, newY = newPos
         self.pos.x = newX
@@ -38,6 +42,11 @@ class Entity:
     def update(self):
         if self.velocity:
             self.pos += self.velocity
+        
+            if self.targetPos:
+                if math.dist(self.targetPos,self.pos) < 2:
+                    self.pos = self.targetPos
+                    self.targetPos = None
     
     def render(self, display, showHitbox = False):
         image = self.images[self.image]
@@ -67,6 +76,7 @@ class Dragable(Entity):
             if mouseDown:
                 if self.hitbox.collidepoint(mousePos):
                     self.isDraged = True
+                    self.targetPos = None
                 
                 if self.isDraged:
                     self.setPos(mousePos)
@@ -80,4 +90,5 @@ class Rob(Entity):
     def __init__(self, centerPos, hitboxSize, images, game):
         super().__init__(centerPos, hitboxSize, images, game)
         self.image = "rob"
+        self.talkIndex = 0
     
