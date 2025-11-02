@@ -26,7 +26,6 @@ class Game:
     def spawnCarparts(self, pos, partType,hitboxSize):
         for i in range(1,100):
             key = partType + str(i)
-            print(key)
             xPos = randrange(-50,50)+pos[0]
             yPos = randrange(-50, 50) + pos[1]
             carpart = Dragable((xPos,yPos),hitboxSize,self.main.images,self.snaprects[partType],self)
@@ -45,6 +44,7 @@ class Game:
                 item.render(display)
     
     def manageDraging(self):
+        self.draging = None
         for carpartType in self.carparts:
             for carpart in self.carparts[carpartType]:
                 if carpart.isDraged:
@@ -52,31 +52,26 @@ class Game:
         if self.draging:
             self.draging.render(self.window)
     def updateAll(self):
-        
-    def run(self):
-        self.window.fill((255,255,255))
         self.thing.update()
-        self.draging = None
-
-        
-        self.manageDraging()
-        self.thing.glideToPos((300,300),4)      
+        self.thing.glideToPos((300,300),4)
         for carpartType in self.carparts:
             self.updateEntList(self.carparts[carpartType])
-        
-        pygame.draw.rect(self.window,(100,100,100),self.snaprect1)
-        
-        self.thing.render(self.window, True)
-        
+    def renderAll(self):
+        #Snaprects och debug
         for carpartType in self.carparts:
             for snaprects in self.snaprects[carpartType]:
                 pygame.draw.rect(self.window,(20,220,100),snaprects)
         
+        #Faktiska spelet
+        self.thing.render(self.window, True)
         for carpartType in self.carparts:
             self.renderEntList(self.carparts[carpartType],self.window)
+            
+    def run(self):
+        self.window.fill((255,255,255))
+        self.manageDraging()
+        self.updateAll()  
+        pygame.draw.rect(self.window,(100,100,100),self.snaprect1)
+        self.renderAll()
         
-        
-        
-        
-
         pygame.display.update()

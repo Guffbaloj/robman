@@ -37,7 +37,7 @@ class Entity:
     
     def update(self):
         if self.velocity:
-            self.pos + self.velocity
+            self.pos += self.velocity
     
     def render(self, display, showHitbox = False):
         image = self.images[self.image]
