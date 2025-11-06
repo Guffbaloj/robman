@@ -12,6 +12,7 @@ class Entity:
         self.hitbox.center = centerPos
         self.targetPos = None
         self.velocity = None
+        
     def glideToPos(self, newPos, time):
         newTarget = pygame.math.Vector2(newPos)
        

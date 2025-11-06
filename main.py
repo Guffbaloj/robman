@@ -1,23 +1,14 @@
 import pygame
-from game import Game
-from entity import Entity, Rob
+from carBuildGame import CarBuildGame
 from utils import *
 
+pygame.init()
 class Main:
     def __init__(self):
         self.window = pygame.display.set_mode((WIDTH,HEIGHT))
-        self.images = {"base":loadImage("gurkman.png"),
-                       "rob":loadImage("rob1.png"),
-                       "back1":loadImage("carparts/back1.png",0.5),
-                       "chassi1":loadImage("carparts/chassi.png",0.5),
-                       "engine1":loadImage("carparts/engine1.png",0.5),
-                       "engine2":loadImage("carparts/engine2.png",0.5),
-                       "engine3":loadImage("carparts/engine3.png",0.5),
-                       "front1":loadImage("carparts/front1.png",0.5),
-                       "front2":loadImage("carparts/front2.png",0.5),
-                       "wheel1":loadImage("carparts/wheel1.png",0.5)}
+        self.images = {"base":loadImage("gurkman.png")}
         
-        self.game = Game(self,self.window)
+        self.game = CarBuildGame(self,self.window)
         self.inputs = {"mouseDown":False,
                         "space":False}
         self.clock = pygame.time.Clock()
