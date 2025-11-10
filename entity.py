@@ -62,6 +62,7 @@ class Dragable(Entity):
         super().__init__(centerPos, hitboxSize, images, game)
         self.snaprects = snaprects
         self.isDraged = False
+        self.hasSnaped = False
     def snapToCenter(self):
         for snaprect in self.snaprects:
             
@@ -86,6 +87,10 @@ class Dragable(Entity):
             
             if not self.isDraged:   
                 self.snapToCenter()
+        self.hasSnaped = False
+        for snaprect in self.snaprects:
+            if snaprect.center == self.pos:
+                self.hasSnaped = True
 
 class Rob(Entity):
     def __init__(self, centerPos, hitboxSize, images, game):
