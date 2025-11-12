@@ -48,6 +48,7 @@ class Entity:
                 if math.dist(self.targetPos,self.pos) < 2:
                     self.pos = self.targetPos
                     self.targetPos = None
+                    self.velocity = None
     
     def render(self, display, showHitbox = False):
         image = self.images[self.image]

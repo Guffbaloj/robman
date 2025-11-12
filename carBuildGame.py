@@ -5,11 +5,15 @@ from utils import *
 from random import randrange
 from dialog import robCarDialog
 
+#alla possitioner rob glider till
+ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
+ROB_CORNER = CENTER_POS + scaledPos(160, 110)
+
 class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "car game"
+        self.currentEvent = "start"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -69,7 +73,7 @@ class CarBuildGame(Game):
 
             self.firstLoop = False
         
-        self.rob.glideToPos(CENTER_POS,3)   
+        self.rob.glideToPos(CENTER_POS, 1)   
         if self.rob.targetPos == self.rob.pos:
             self.firstLoop = True
             self.currentEvent = "rob talk"
@@ -89,8 +93,7 @@ class CarBuildGame(Game):
     def robAway(self, firstLoop):
         if firstLoop:
             self.firstLoop = False
-        
-        self.rob.glideToPos(ROB_CORNER,3)
+            self.rob.glideToPos(ROB_CORNER,3)
         if self.rob.targetPos == self.rob.pos:
             self.firstLoop = True
             self.currentEvent = "car game"

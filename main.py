@@ -18,7 +18,7 @@ class Main:
                         "space":False}
         self.clock = pygame.time.Clock()
         self.justPressed = None
-        self.loadNewScene("car game")
+        self.loadNewScene("main menu")
     
     def loadNewScene(self, newScene):
         self.currenScene = self.scenes[newScene](self, self.window)

@@ -18,10 +18,6 @@ CHARACTER_PER_ROW = 60
 X_POINT = WIDTH // 200
 Y_POINT = HEIGHT // 200
 
-#alla possitioner rob glider till under speletts långa gång
-ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
-ROB_CORNER = (WIDTH - 20*X_POINT,HEIGHT-3 * Y_POINT)
-
 def scaledPos(x, y):
     return [x * GAME_SCALE, y * GAME_SCALE]
 
