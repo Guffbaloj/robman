@@ -1,7 +1,7 @@
 import pygame
 
 BASE_PATH = "images/"
-GAME_SCALE = 2
+GAME_SCALE = 1
 WIDTH = 640 * GAME_SCALE 
 HEIGHT = 480 * GAME_SCALE
 CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)

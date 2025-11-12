@@ -93,7 +93,8 @@ class CarBuildGame(Game):
     def robAway(self, firstLoop):
         if firstLoop:
             self.firstLoop = False
-            self.rob.glideToPos(ROB_CORNER,3)
+        self.rob.glideToPos(ROB_CORNER,3)
+        
         if self.rob.targetPos == self.rob.pos:
             self.firstLoop = True
             self.currentEvent = "car game"
@@ -131,6 +132,3 @@ class CarBuildGame(Game):
                             self.builtCar[currentSnaprect] = carpart
                     currentSnaprect += 1
         print(self.builtCar, currentSnaprect)"""
-
-
-        print(self.builtCar)

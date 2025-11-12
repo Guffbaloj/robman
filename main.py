@@ -2,6 +2,7 @@ import pygame
 from carBuildGame import CarBuildGame
 from mainMenu import MainMenu
 from utils import *
+#import cProfile as profile
 
 pygame.init()
 class Main:
@@ -47,4 +48,5 @@ class Main:
             
 
 if __name__ == "__main__":
+    #profile.run("Main().run()")
     Main().run()

@@ -13,7 +13,7 @@ class Entity:
         self.targetPos = None
         self.velocity = None
         
-    def glideToPos(self, newPos, time):
+    def glideToPos(self, newPos, duration):
         newTarget = pygame.math.Vector2(newPos)
        
         if self.targetPos != newTarget:
@@ -21,8 +21,8 @@ class Entity:
             dX = newPos[0] - self.pos.x
             dY = newPos[1] - self.pos.y
             
-            xStep = dX/(time*FPS)
-            yStep = dY/(time*FPS)
+            xStep = dX/(duration*FPS)
+            yStep = dY/(duration*FPS)
             self.velocity = pygame.math.Vector2(xStep,yStep)
             
         
