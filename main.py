@@ -21,7 +21,7 @@ class Main:
         self.loadNewScene("main menu")
     
     def loadNewScene(self, newScene):
-        self.currenScene = self.scenes[newScene](self, self.window)
+        self.currentScene = self.scenes[newScene](self, self.window)
     
     def run(self):
         while True:
@@ -42,7 +42,7 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         self.inputs["mouseDown"] = False
-            self.currenScene.run()
+            self.currentScene.run()
             self.clock.tick(FPS)
             
 
