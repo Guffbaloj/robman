@@ -17,7 +17,6 @@ class CarBuildGame(Game):
         #BILDER OCH FONTER
         self.fonts = {"rob":pygame.font.SysFont("arial", TEXT_SIZE)}
         self.images = {"base":loadImage("gurkman.png"),
-                       "rob":loadImage("rob1.png"),
                        "back1":loadImage("carparts/back1.png",0.5),
                        "chassi1":loadImage("carparts/chassi.png",0.5),
                        "engine1":loadImage("carparts/engine1.png",0.5),
@@ -26,12 +25,13 @@ class CarBuildGame(Game):
                        "front1":loadImage("carparts/front1.png",0.5),
                        "front2":loadImage("carparts/front2.png",0.5),
                        "wheel1":loadImage("carparts/wheel1.png",0.5),
-                       "background1": loadImage("carFactory.png")}
+                       "background1": loadImage("carFactory.png", 0.5)}
+        robImages = {"rob":loadImage("rob1.png")}
 
         #ENTITIES
         self.carparts = {}
         self.snaprects = {}
-        self.rob = Rob((0,400),(100,100),self.images,self)
+        self.rob = Rob((0,400),(100,100),robImages,self)
         self.entities.append(self.rob)
 
         self.builtCar = {}
@@ -45,8 +45,8 @@ class CarBuildGame(Game):
         super().renderAll()   
     def spawnCarparts(self, pos, partType,hitboxSize):
         
-        
-        
+        pos = scaledPos(pos[0], pos[1])
+        hitboxSize = scaledPos(hitboxSize[0], hitboxSize[1])
         for i in range(1,100):
             key = partType + str(i)
             xPos = randrange(-50,50)+pos[0]
@@ -104,14 +104,15 @@ class CarBuildGame(Game):
     def carGame(self, firstLoop):
         if firstLoop:
             self.rob.setPos(ROB_CORNER)
-            carCenterX, carCenterY = CENTER_POS
+            CAR_CENTER = CENTER_POS * 1.2
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
-            self.snaprects ={"engine":[pygame.rect.Rect(carCenterX,carCenterY,100,100)],
-                          "back":[pygame.rect.Rect(carCenterX-75,carCenterY,100,100)],
-                         "front":[pygame.rect.Rect(carCenterX+75,carCenterY,100,100)],
-                         "wheel":[pygame.rect.Rect(carCenterX-80,carCenterY+90,100,100),
-                                  pygame.rect.Rect(carCenterX+75,carCenterY+90,100,100)]}
+            self.snaprects ={"engine":[makeRect(CAR_CENTER, scaledPos(100, 100))],
+                          "back":[makeRect(CAR_CENTER + scaledPos(-75, 0), scaledPos(100, 100))],
+                         "front":[makeRect(CAR_CENTER + scaledPos(75, 0), scaledPos(100, 100))],
+                         "wheel":[makeRect(CAR_CENTER + scaledPos(75, 90), scaledPos(50, 50)),
+                                  makeRect(CAR_CENTER + scaledPos(-85, 90), scaledPos(50, 50))]}
+            
             self.spawnCarparts((100,100),"engine",(75,75))
             self.spawnCarparts((100,100),"back",(100,100))
             self.spawnCarparts((100,100),"front",(100,100))

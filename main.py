@@ -9,12 +9,20 @@ class Main:
         self.window = pygame.display.set_mode((WIDTH,HEIGHT))
         self.images = {"base":loadImage("gurkman.png")}
         
-        self.game = CarBuildGame(self,self.window)
-        self.maniMenu = MainMenu(self, self.window)
+        self.scenes = {"main menu":  MainMenu,
+                       "car game": CarBuildGame}
+        
+        self.currentScene = None
+        
         self.inputs = {"mouseDown":False,
                         "space":False}
         self.clock = pygame.time.Clock()
         self.justPressed = None
+        self.loadNewScene("car game")
+    
+    def loadNewScene(self, newScene):
+        self.currenScene = self.scenes[newScene](self, self.window)
+    
     def run(self):
         while True:
             self.justPressed = None
@@ -30,10 +38,11 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.inputs["mouseDown"] = True
+                        self.justPressed = "mouse1"
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         self.inputs["mouseDown"] = False
-            self.maniMenu.run()
+            self.currenScene.run()
             self.clock.tick(FPS)
             
 

@@ -56,6 +56,27 @@ class Entity:
         if showHitbox:
             pygame.draw.rect(display,(130,130,130,20),self.hitbox)
 
+class Button(Entity):
+    #En button måste ta in två bilder. Första är hover bilden, andra är 
+    def __init__(self, centerPos, images, game):
+        super().__init__(centerPos, (1, 1), images, game)
+        self.image = "passive"
+        self.hitbox = self.getImageRect()
+        self.wasPressed = False
+    
+    def update(self):
+        super().update()
+        mousePos = pygame.mouse.get_pos()
+        self.wasPressed = False
+        if self.hitbox.collidepoint(mousePos):
+            self.image = "active"
+            if self.game.main.justPressed == "mouse1":
+                self.wasPressed = True
+        else:
+            self.image = "passive"
+        
+
+
 
 class Dragable(Entity):
     def __init__(self, centerPos, hitboxSize, images, snaprects, game):
