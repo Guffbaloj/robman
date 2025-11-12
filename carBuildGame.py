@@ -25,7 +25,8 @@ class CarBuildGame(Game):
                        "engine3":loadImage("carparts/engine3.png",0.5),
                        "front1":loadImage("carparts/front1.png",0.5),
                        "front2":loadImage("carparts/front2.png",0.5),
-                       "wheel1":loadImage("carparts/wheel1.png",0.5)}
+                       "wheel1":loadImage("carparts/wheel1.png",0.5),
+                       "background1": loadImage("carFactory.png")}
 
         #ENTITIES
         self.carparts = {}
@@ -34,7 +35,14 @@ class CarBuildGame(Game):
         self.entities.append(self.rob)
 
         self.builtCar = {}
-        
+
+        #SETUP
+        self.background = "background1"
+    def renderAll(self):
+        for carpartType in self.carparts:
+            for snaprects in self.snaprects[carpartType]:
+                pygame.draw.rect(self.window,(20,220,100),snaprects)
+        super().renderAll()   
     def spawnCarparts(self, pos, partType,hitboxSize):
         
         
@@ -95,6 +103,7 @@ class CarBuildGame(Game):
                     
     def carGame(self, firstLoop):
         if firstLoop:
+            self.rob.setPos(ROB_CORNER)
             carCenterX, carCenterY = CENTER_POS
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
@@ -110,14 +119,14 @@ class CarBuildGame(Game):
             self.spawnCarparts((100,100),"wheel",(50,50))
             self.firstLoop = False
         currentSnaprect = 0
-        for carparts in self.carparts:
+        """for carparts in self.carparts:
             for snaprectList in self.snaprects[carparts]:
                 for snaprect in snaprectList:
                     for carpart in self.carparts[carparts]:
                         if snaprect.collidepoint(carpart.getPos):
                             self.builtCar[currentSnaprect] = carpart
                     currentSnaprect += 1
-        print(self.builtCar, currentSnaprect)
+        print(self.builtCar, currentSnaprect)"""
 
 
         print(self.builtCar)

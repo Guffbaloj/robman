@@ -1,5 +1,6 @@
 import pygame
 from carBuildGame import CarBuildGame
+from mainMenu import MainMenu
 from utils import *
 
 pygame.init()
@@ -9,6 +10,7 @@ class Main:
         self.images = {"base":loadImage("gurkman.png")}
         
         self.game = CarBuildGame(self,self.window)
+        self.maniMenu = MainMenu(self, self.window)
         self.inputs = {"mouseDown":False,
                         "space":False}
         self.clock = pygame.time.Clock()
@@ -31,7 +33,7 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
                         self.inputs["mouseDown"] = False
-            self.game.run()
+            self.maniMenu.run()
             self.clock.tick(FPS)
             
 

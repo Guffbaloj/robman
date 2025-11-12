@@ -1,8 +1,8 @@
 import pygame
 
 BASE_PATH = "images/"
-WIDTH = 820
-HEIGHT = 640
+WIDTH = 1280
+HEIGHT = 960
 CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)
 FPS = 60
 

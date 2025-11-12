@@ -11,7 +11,7 @@ class Game:
         self.entities = []
         self.draging = None
 
-        #TDIALOG OCH TEXTDISPLAY
+        #DIALOG OCH TEXTDISPLAY
         self.dialogText = None
         self.textRect = pygame.Rect(TEXBOX_X, TEXTBOX_Y, TEXTBOX_WIDTH, TEXTBOX_HEIGHT)
         self.activeTextIndex = 0
@@ -21,6 +21,8 @@ class Game:
         self.textDuration = 2
 
         #SPELSCENERNA
+        self.images = {}
+        self.background = None
         self.firstLoop = True
         self.currentEvent = "start"
         
@@ -89,10 +91,6 @@ class Game:
             y_offset += text.get_height()
         
     def renderAll(self):
-        #Snaprects och debug
-        for carpartType in self.carparts:
-            for snaprects in self.snaprects[carpartType]:
-                pygame.draw.rect(self.window,(20,220,100),snaprects)
         
         #Faktiska spelet
         self.renderEntList(self.entities, self.window)
@@ -102,7 +100,10 @@ class Game:
             self.renderDialog(self.dialogText, self.window)
     
     def run(self):
-        self.window.fill((255,255,255))            
+        if not self.background: 
+            self.window.fill((255,255,255))    
+        else: 
+            self.window.blit(self.images[self.background], (0,0))
         self.events[self.currentEvent](self.firstLoop)
         self.updateAll()
         self.renderAll() 
