@@ -29,13 +29,15 @@ class CarBuildGame(Game):
                        "front1":loadImage("carparts/front1.png",0.5),
                        "front2":loadImage("carparts/front2.png",0.5),
                        "wheel1":loadImage("carparts/wheel1.png",0.5),
-                       "background1": loadImage("carFactory.png", 0.5)}
+                       "background1": loadImage("carFactory.png", 0.5),
+                       "background2": loadImage("bg1.png")}
         robImages = {"rob":loadImage("rob1.png")}
 
         #ENTITIES
         self.carparts = {}
         self.snaprects = {}
         self.rob = Rob((0,400),(100,100),robImages,self)
+        
         self.entities.append(self.rob)
 
         self.builtCar = {}
@@ -43,6 +45,7 @@ class CarBuildGame(Game):
         #SETUP
         self.background = "background1"
     def renderAll(self):
+        
         for carpartType in self.carparts:
             for snaprects in self.snaprects[carpartType]:
                 pygame.draw.rect(self.window,(20,220,100),snaprects)
