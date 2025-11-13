@@ -83,40 +83,32 @@ class Dragable(Entity):
     def __init__(self, centerPos, hitboxSize, images, snaprects, game):
         super().__init__(centerPos, hitboxSize, images, game)
         self.snaprects = snaprects
-        self.isDraged = False
         self.hasSnaped = False
+        self.relativeMousePos = None
     def snapToCenter(self):
         for snaprect in self.snaprects:
-            
             if self.getHitbox().colliderect(snaprect):
                 self.setPos(snaprect.center)
                 break
-    
+    def getRelativeMousePos(self, mousePos):
+        dX = self.pos.x - mousePos[0]
+        dY = self.pos.y - mousePos[1]
+        self.relativeMousePos = pygame.math.Vector2(dX, dY)
+
     def update(self):
         super().update()
-        mousePos = pygame.mouse.get_pos()
-        mouseDown = self.game.main.inputs["mouseDown"]
-        if self.game.draging == None or self.game.draging == self:
-            if mouseDown:
-                if self.hitbox.collidepoint(mousePos):
-                    self.isDraged = True
-                    self.targetPos = None
-                
-                if self.isDraged:
-                    self.setPos(mousePos)
-            else:
-                self.isDraged = False
-            
-            if not self.isDraged:   
-                self.snapToCenter()
         self.hasSnaped = False
         for snaprect in self.snaprects:
             if snaprect.center == self.pos:
                 self.hasSnaped = True
 
 class Rob(Entity):
-    def __init__(self, centerPos, hitboxSize, images, game):
-        super().__init__(centerPos, hitboxSize, images, game)
-        self.image = "rob"
-        self.talkIndex = 0
-    
+    def __init__(self, centerPos, hitboxSize, game):
+        super().__init__(centerPos, hitboxSize, None, game)
+        self.image = "front neutral"
+        self.images = {"front neutral":loadImage("robFront.png"),
+                     "left neutral":loadImage("robLeft.png"),
+                     "right neutral":loadImage("robRight.png"),}
+
+    def setImage(self, direction, emotion = "neutral"):
+        self.image = direction + " " + emotion

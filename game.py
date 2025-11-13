@@ -38,11 +38,24 @@ class Game:
             self.draging.render(self.window)
     
     def manageDraging(self):
-        self.draging = None
+        mousePos = pygame.mouse.get_pos()
+        mouseDown = self.main.inputs["mouseDown"]
+        #self.draging = None
+                    
+        if self.draging:
+            
+            self.draging.setPos((mousePos[0] + self.draging.relativeMousePos.x, mousePos[1] + self.draging.relativeMousePos.y)) 
+            if self.main.justUp == "mouse1":
+                self.draging.snapToCenter()
+                self.draging = None
+            return
+        
         for entity in self.entities:
             if isinstance(entity, Dragable):
-                if entity.isDraged:
+                if entity.getImageRect().collidepoint(mousePos) and mouseDown:
                     self.draging = entity
+                    if self.main.justPressed == "mouse1":
+                        self.draging.getRelativeMousePos(mousePos)       
     
     def handleDialog(self, dialogList):
         if len(dialogList) > self.activeTextIndex:

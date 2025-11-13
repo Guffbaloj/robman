@@ -2,7 +2,7 @@ import pygame
 from game import Game
 from utils import *
 from entity import Button
-START_BUTTON_POS = CENTER_POS + (20 * X_POINT, 20 * Y_POINT)
+START_BUTTON_POS = CENTER_POS + scaledPos(110, 55)
 class MainMenu(Game):
     def __init__(self, main, display):
         super().__init__(main, display)
@@ -23,6 +23,5 @@ class MainMenu(Game):
             firstLoop = False
         
         if self.startButton.wasPressed:
-            print("wow")
             self.main.loadNewScene("car game")
         

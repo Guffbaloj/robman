@@ -13,7 +13,7 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "start"
+        self.currentEvent = "car game"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -22,20 +22,23 @@ class CarBuildGame(Game):
         self.fonts = {"rob":pygame.font.SysFont("arial", TEXT_SIZE)}
         self.images = {"base":loadImage("gurkman.png"),
                        "back1":loadImage("carparts/back1.png",0.5),
+                       "back2":loadImage("carparts/back2.png",0.5),
+                       "back3":loadImage("carparts/back3.png",0.5),
                        "chassi1":loadImage("carparts/chassi.png",0.5),
                        "engine1":loadImage("carparts/engine1.png",0.5),
                        "engine2":loadImage("carparts/engine2.png",0.5),
                        "engine3":loadImage("carparts/engine3.png",0.5),
                        "front1":loadImage("carparts/front1.png",0.5),
                        "front2":loadImage("carparts/front2.png",0.5),
+                       "front3":loadImage("carparts/front3.png",0.5),
                        "wheel1":loadImage("carparts/wheel1.png",0.5),
                        "background1": loadImage("carFactory.png", 0.5)}
-        robImages = {"rob":loadImage("rob1.png")}
+        
 
         #ENTITIES
         self.carparts = {}
         self.snaprects = {}
-        self.rob = Rob((0,400),(100,100),robImages,self)
+        self.rob = Rob((0,400),(100,100),self)
         self.entities.append(self.rob)
 
         self.builtCar = {}
@@ -70,10 +73,10 @@ class CarBuildGame(Game):
     def robArives(self, firstLoop):
         if firstLoop:
             self.rob.setPos(ROB_SIDE_ENTRANCE)
-
+            self.rob.setImage("right")
             self.firstLoop = False
         
-        self.rob.glideToPos(CENTER_POS, 1)   
+        self.rob.glideToPos(CENTER_POS, 2)   
         if self.rob.targetPos == self.rob.pos:
             self.firstLoop = True
             self.currentEvent = "rob talk"
@@ -81,6 +84,8 @@ class CarBuildGame(Game):
     def robTalk(self, firstloop):
         if firstloop:
             self.activeTextIndex = 0
+            self.rob.setPos(CENTER_POS)
+            self.rob.setImage("front")
             self.previousTextIndex = None
             self.firstLoop = False
         
@@ -93,29 +98,26 @@ class CarBuildGame(Game):
     def robAway(self, firstLoop):
         if firstLoop:
             self.firstLoop = False
-        self.rob.glideToPos(ROB_CORNER,3)
+            self.rob.setPos(CENTER_POS)
+            self.rob.setImage("right")
+        self.rob.glideToPos(ROB_CORNER, 2)
         
         if self.rob.targetPos == self.rob.pos:
             self.firstLoop = True
             self.currentEvent = "car game"
-    def manageDraging(self):
-        self.draging = None
-        for entity in self.entities:
-            if isinstance(entity, Dragable):
-                if entity.isDraged:
-                    self.draging = entity
                     
     def carGame(self, firstLoop):
         if firstLoop:
             self.rob.setPos(ROB_CORNER)
-            CAR_CENTER = CENTER_POS * 1.2
+            self.rob.setImage("front")
+            CAR_CENTER = CENTER_POS  + scaledPos(-10, -50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
             self.snaprects ={"engine":[makeRect(CAR_CENTER, scaledPos(100, 100))],
-                          "back":[makeRect(CAR_CENTER + scaledPos(-75, 0), scaledPos(100, 100))],
-                         "front":[makeRect(CAR_CENTER + scaledPos(75, 0), scaledPos(100, 100))],
-                         "wheel":[makeRect(CAR_CENTER + scaledPos(75, 90), scaledPos(50, 50)),
-                                  makeRect(CAR_CENTER + scaledPos(-85, 90), scaledPos(50, 50))]}
+                          "back":[makeRect(CAR_CENTER + scaledPos(-100, 0), scaledPos(100, 100))],
+                         "front":[makeRect(CAR_CENTER + scaledPos(100, 0), scaledPos(100, 100))],
+                         "wheel":[makeRect(CAR_CENTER + scaledPos(120, 80), scaledPos(50, 50)),
+                                  makeRect(CAR_CENTER + scaledPos(-100, 80), scaledPos(50, 50))]}
             
             self.spawnCarparts((100,100),"engine",(75,75))
             self.spawnCarparts((100,100),"back",(100,100))

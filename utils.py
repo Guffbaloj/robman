@@ -7,11 +7,11 @@ HEIGHT = 480 * GAME_SCALE
 CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)
 FPS = 60
 
-TEXT_SIZE = 20
-TEXTBOX_WIDTH = 500
-TEXTBOX_HEIGHT = 100
+TEXT_SIZE = 20 * GAME_SCALE
+TEXTBOX_WIDTH = 500 * GAME_SCALE
+TEXTBOX_HEIGHT = 100 * GAME_SCALE
 TEXBOX_X = WIDTH/2 - TEXTBOX_WIDTH/2
-TEXTBOX_Y = HEIGHT - TEXTBOX_HEIGHT - 80
+TEXTBOX_Y = HEIGHT - TEXTBOX_HEIGHT - 80 * GAME_SCALE
 CHARACTER_PER_ROW = 60
 
 #Spelpunkter
@@ -23,9 +23,10 @@ def scaledPos(x, y):
 
 def loadImage(path, size = 1):
     image = pygame.image.load(BASE_PATH+path)
-    image.convert_alpha()
     height, width = image.get_size()
     image = pygame.transform.scale(image,(height*size * GAME_SCALE, width*size * GAME_SCALE))
+    image.convert()
+    image.set_colorkey((0,0,0))
     return image
 
 def pygameQuitEvent():
