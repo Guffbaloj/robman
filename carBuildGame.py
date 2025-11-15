@@ -46,6 +46,7 @@ class CarBuildGame(Game):
         #SETUP
         self.background = "background1"
     def renderAll(self):
+        
         for carpartType in self.carparts:
             for snaprects in self.snaprects[carpartType]:
                 pygame.draw.rect(self.window,(20,220,100),snaprects)
