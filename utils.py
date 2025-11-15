@@ -7,7 +7,7 @@ HEIGHT = 480 * GAME_SCALE
 CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)
 FPS = 60
 
-TEXT_SIZE = 20 * GAME_SCALE
+TEXT_SIZE = 25 * GAME_SCALE
 TEXTBOX_WIDTH = 500 * GAME_SCALE
 TEXTBOX_HEIGHT = 100 * GAME_SCALE
 TEXBOX_X = WIDTH/2 - TEXTBOX_WIDTH/2
@@ -38,3 +38,10 @@ def makeRect(centerPos, size):
     rect = pygame.rect.Rect(0, 0, size[0], size[1])
     rect.center = centerPos
     return rect
+
+def updateEntList(list):
+    for item in list:
+        item.update()
+def renderEntList(list, display):
+    for item in list:
+        item.render(display)

@@ -10,7 +10,14 @@ class Game:
         self.window = display
         self.entities = []
         self.draging = None
-
+        self.generalTimer = 0
+        #RENDERLAYERS
+        self.rl0 = [] #bakgrunden
+        self.rl1 = [] #lagret precis framför bakgrunden
+        self.rl2 = [] 
+        self.rl3 = [] 
+        self.rl4 = [] # Vanligen robs lager
+        self.rlUI = [] # lagret för UI
         #DIALOG OCH TEXTDISPLAY
         self.dialogText = None
         self.textRect = pygame.Rect(TEXBOX_X, TEXTBOX_Y, TEXTBOX_WIDTH, TEXTBOX_HEIGHT)
@@ -19,24 +26,14 @@ class Game:
         self.textSource = None
         self.textColor = (255,255,255)
         self.textDuration = 2
+        self.textEvent = []
 
         #SPELSCENERNA
         self.images = {}
         self.background = None
         self.firstLoop = True
         self.currentEvent = "start"
-        
-            
-    def updateEntList(self,list):
-        for item in list:
-            item.update()
-    def renderEntList(self, list, display):
-        for item in list:
-            if not item == self.draging:
-                item.render(display)
-        if self.draging:
-            self.draging.render(self.window)
-    
+
     def manageDraging(self):
         mousePos = pygame.mouse.get_pos()
         mouseDown = self.main.inputs["mouseDown"]
@@ -61,20 +58,12 @@ class Game:
         if len(dialogList) > self.activeTextIndex:
             currenCharacter = self.textTimer //self.textDuration
             textData = dialogList[self.activeTextIndex]
-            text = textData["text"]
+            text = textData.text
             
-            self.textSource = None
-            self.textColor = (255,255,255)
-            self.textDuration = 2
-            try: self.textSource = textData["source"]
-            except:
-                pass
-            try: self.textColor = textData["color"]
-            except:
-                pass
-            try: self.textDuration = textData["speed"]
-            except:
-                pass
+            self.textSource = textData.source
+            self.textColor = textData.color
+            self.textDuration = textData.duration
+            self.textEvent = textData.special
             
             saidText = text[0:min(currenCharacter, len(text))]
             self.dialogText = textwrap.wrap(saidText,CHARACTER_PER_ROW)
@@ -89,11 +78,10 @@ class Game:
                     self.textTimer = 0
         else:
             self.activeTextIndex = "Done"
-            self.dialogText = None
-        
+            self.dialogText = None  
     def updateAll(self):
         self.manageDraging()
-        self.updateEntList(self.entities)   
+        updateEntList(self.entities)   
 
     def renderDialog(self, wrapedText, display):
         pygame.draw.rect(display,(0,0,0), self.textRect)
@@ -104,19 +92,23 @@ class Game:
             y_offset += text.get_height()
         
     def renderAll(self):
-        
-        #Faktiska spelet
-        self.renderEntList(self.entities, self.window)
-        if self.draging:
-            self.draging.render(self.window)
+        if self.rl0:
+            renderEntList(self.rl0, self.window)
+        else:
+            self.window.fill((255,255,255))    
+        renderEntList(self.rl1, self.window)
+        renderEntList(self.rl2, self.window)
+        renderEntList(self.rl3, self.window)
+        renderEntList(self.rl4, self.window)
         if self.dialogText:
             self.renderDialog(self.dialogText, self.window)
+        if self.draging:
+            self.draging.render(self.window)
+        renderEntList(self.rlUI, self.window)    
+        
     
     def run(self):
-        if not self.background: 
-            self.window.fill((255,255,255))    
-        else: 
-            self.window.blit(self.images[self.background], (0,0))
+        
         self.events[self.currentEvent](self.firstLoop)
         self.updateAll()
         self.renderAll() 

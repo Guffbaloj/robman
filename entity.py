@@ -14,6 +14,7 @@ class Entity:
         self.velocity = None
         
     def glideToPos(self, newPos, duration):
+        done = False
         newTarget = pygame.math.Vector2(newPos)
        
         if self.targetPos != newTarget:
@@ -24,6 +25,9 @@ class Entity:
             xStep = dX/(duration*FPS)
             yStep = dY/(duration*FPS)
             self.velocity = pygame.math.Vector2(xStep,yStep)
+        if self.targetPos == self.pos:
+            done = True
+        return done
             
         
     def setPos(self,newPos):
@@ -76,7 +80,13 @@ class Button(Entity):
         else:
             self.image = "passive"
         
-
+class Background:
+    def __init__(self, image):
+        self.image = image
+    def setBackground(self, newImage):
+        self.image = newImage
+    def render(self, display):
+        display.blit(self.image, (0,0))
 
 
 class Dragable(Entity):
@@ -107,8 +117,19 @@ class Rob(Entity):
         super().__init__(centerPos, hitboxSize, None, game)
         self.image = "front neutral"
         self.images = {"front neutral":loadImage("robFront.png"),
+                       "front worry":loadImage("robOrolig.png"),
                      "left neutral":loadImage("robLeft.png"),
                      "right neutral":loadImage("robRight.png"),}
 
     def setImage(self, direction, emotion = "neutral"):
         self.image = direction + " " + emotion
+    def doSpecial(self, specialList):
+        if "rob worry" in specialList:
+            self.setImage("front","worry")
+        elif "rob neutral"in specialList:
+            self.setImage("front", "neutral")
+    def update(self):
+        super().update()
+        
+        if len(self.game.textEvent) > 0:
+            self.doSpecial(self.game.textEvent)

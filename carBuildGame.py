@@ -1,6 +1,6 @@
 import pygame
 from game import Game
-from entity import Dragable, Rob
+from entity import Dragable, Rob, Background
 from utils import *
 from random import randrange
 from dialog import robCarDialog
@@ -13,13 +13,14 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "car game"
+        self.currentEvent = "start"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
                         "car game": self.carGame}
         #BILDER OCH FONTER
-        self.fonts = {"rob":pygame.font.SysFont("arial", TEXT_SIZE)}
+        self.fonts = {"base": pygame.font.SysFont("arial", TEXT_SIZE),
+                      "rob": pygame.font.SysFont("arial", TEXT_SIZE)}
         self.images = {"base":loadImage("gurkman.png"),
                        "back1":loadImage("carparts/back1.png",0.5),
                        "back2":loadImage("carparts/back2.png",0.5),
@@ -32,7 +33,8 @@ class CarBuildGame(Game):
                        "front2":loadImage("carparts/front2.png",0.5),
                        "front3":loadImage("carparts/front3.png",0.5),
                        "wheel1":loadImage("carparts/wheel1.png",0.5),
-                       "background1": loadImage("carFactory.png", 0.5)}
+                       "background1": loadImage("carFactory.png"),
+                       "background2": loadImage("bg1.png")}
         
 
         #ENTITIES
@@ -44,13 +46,12 @@ class CarBuildGame(Game):
         self.builtCar = {}
 
         #SETUP
-        self.background = "background1"
-    def renderAll(self):
-        
-        for carpartType in self.carparts:
-            for snaprects in self.snaprects[carpartType]:
-                pygame.draw.rect(self.window,(20,220,100),snaprects)
-        super().renderAll()   
+        self.background1 = Background(self.images["background1"])
+        self.background2 = Background(self.images["background2"])
+        self.rl0.append(self.background1)
+        self.rl2.append(self.background2)
+        self.rl4.append(self.rob)
+
     def spawnCarparts(self, pos, partType,hitboxSize):
         
         pos = scaledPos(pos[0], pos[1])
@@ -67,6 +68,7 @@ class CarBuildGame(Game):
             carpart.image = key
             self.carparts[partType].append(carpart)
             self.entities.append(carpart)
+            self.rl3.append(carpart)
     
     #===========================================
     #                SPELETS SCENER
@@ -77,8 +79,8 @@ class CarBuildGame(Game):
             self.rob.setImage("right")
             self.firstLoop = False
         
-        self.rob.glideToPos(CENTER_POS, 2)   
-        if self.rob.targetPos == self.rob.pos:
+        done = self.rob.glideToPos(CENTER_POS, 2)   
+        if done:
             self.firstLoop = True
             self.currentEvent = "rob talk"
         
@@ -89,8 +91,11 @@ class CarBuildGame(Game):
             self.rob.setImage("front")
             self.previousTextIndex = None
             self.firstLoop = False
-        
-        self.handleDialog(robCarDialog) #slutar med att self.activeTextIndex sätts till "Done"
+            self.generalTimer = 0
+        if self.generalTimer < 1 * FPS:
+            self.generalTimer += 1
+        else:
+            self.handleDialog(robCarDialog) #slutar med att self.activeTextIndex sätts till "Done"
             
         if self.activeTextIndex == "Done":
             self.firstLoop = True
@@ -111,7 +116,7 @@ class CarBuildGame(Game):
         if firstLoop:
             self.rob.setPos(ROB_CORNER)
             self.rob.setImage("front")
-            CAR_CENTER = CENTER_POS  + scaledPos(-10, -50)
+            CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
             self.snaprects ={"engine":[makeRect(CAR_CENTER, scaledPos(100, 100))],
