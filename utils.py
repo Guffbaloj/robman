@@ -4,7 +4,7 @@ BASE_PATH = "images/"
 GAME_SCALE = 1
 WIDTH = 640 * GAME_SCALE 
 HEIGHT = 480 * GAME_SCALE
-CENTER_POS = pygame.math.Vector2(WIDTH/2,HEIGHT/2)
+CENTER_POS = pygame.math.Vector2(WIDTH/2, HEIGHT/2)
 FPS = 60
 
 TEXT_SIZE = 25 * GAME_SCALE
@@ -29,6 +29,9 @@ def loadImage(path, size = 1):
     image.set_colorkey((0,0,0))
     return image
 
+def flip(img,boolean=True):
+    return pygame.transform.flip(img,boolean,False)
+
 def pygameQuitEvent():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -45,3 +48,18 @@ def updateEntList(list):
 def renderEntList(list, display):
     for item in list:
         item.render(display)
+
+def getCollisions(rect1, rectsList):
+    collisions = [] 
+    for rect in rectsList:
+        if rect1.colliderect(rect):
+            collisions.append(rect)
+    return collisions
+
+class Background:
+    def __init__(self, image):
+        self.image = image
+    def setBackground(self, newImage):
+        self.image = newImage
+    def render(self, display):
+        display.blit(self.image, (0,0))

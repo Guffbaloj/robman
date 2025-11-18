@@ -1,6 +1,6 @@
 import pygame
 from game import Game
-from entity import Dragable, Rob, Background
+from entity import Background, Entity, Dragable, Rob
 from utils import *
 from random import randrange
 from dialog import robCarDialog
@@ -13,7 +13,7 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "start"
+        self.currentEvent = "car game"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -40,7 +40,7 @@ class CarBuildGame(Game):
         #ENTITIES
         self.carparts = {}
         self.snaprects = {}
-        self.rob = Rob((0,400),(100,100),self)
+        self.rob = Rob(self, (0,400),(100,100))
         self.entities.append(self.rob)
 
         self.builtCar = {}
@@ -60,12 +60,12 @@ class CarBuildGame(Game):
             key = partType + str(i)
             xPos = randrange(-50,50)+pos[0]
             yPos = randrange(-50, 50) + pos[1]
-            carpart = Dragable((xPos,yPos),hitboxSize,self.images,self.snaprects[partType],self)
+            carpart = Dragable(self, (xPos,yPos),hitboxSize, "carpart",self.snaprects[partType])
             try:
                 img = self.images[key]
             except:
                 break
-            carpart.image = key
+            carpart.setImage(key)
             self.carparts[partType].append(carpart)
             self.entities.append(carpart)
             self.rl3.append(carpart)
@@ -88,7 +88,7 @@ class CarBuildGame(Game):
         if firstloop:
             self.activeTextIndex = 0
             self.rob.setPos(CENTER_POS)
-            self.rob.setImage("front")
+            #self.rob.setImage("front")
             self.previousTextIndex = None
             self.firstLoop = False
             self.generalTimer = 0
@@ -105,7 +105,7 @@ class CarBuildGame(Game):
         if firstLoop:
             self.firstLoop = False
             self.rob.setPos(CENTER_POS)
-            self.rob.setImage("right")
+            #self.rob.setImage("right")
         self.rob.glideToPos(ROB_CORNER, 2)
         
         if self.rob.targetPos == self.rob.pos:
@@ -115,7 +115,7 @@ class CarBuildGame(Game):
     def carGame(self, firstLoop):
         if firstLoop:
             self.rob.setPos(ROB_CORNER)
-            self.rob.setImage("front")
+            #self.rob.setImage("front")
             CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
