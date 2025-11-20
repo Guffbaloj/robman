@@ -38,7 +38,7 @@ class PhysicsObjects:
     def draw(self, display, offset): #Debug och sånt
         offsetPos = self.pos - offset
         offsetRect = pygame.rect.Rect(offsetPos.x, offsetPos.y, self.size.x, self.size.y)
-        pygame.draw.rect(display,(33,233,211), offsetRect)
+        pygame.draw.rect(display,(255,233,211), offsetRect)
 
 class Entity:
     def __init__(self, game, pos, size, eType):
@@ -46,20 +46,29 @@ class Entity:
         self.pos = pygame.math.Vector2(pos)
         self.velocity = pygame.math.Vector2(0, 0)
         self.size = pygame.math.Vector2(size) * GAME_SCALE
-        self.rect = pygame.rect.Rect(pos[0], pos[1], size[0], size[1])
         self.object = PhysicsObjects(pos, size)
-        self.images = game.images
+        self.images = game.images[eType]
         self.imageKey = None
         self.flip = False
         self.type = eType
         self.wasPressed = False
         self.targetPos = None
     
+    def getRect(self):
+        rect = pygame.rect.Rect(0, 0, self.size.x, self.size.y)
+        rect.center = self.pos
+        return rect
+    
+    def getImageRect(self):
+        rect = self.images[self.imageKey].get_rect()
+        rect.center = self.pos
+        return rect
+    
     def glideToPos(self, newPos, duration):
         done = False
         newTarget = pygame.math.Vector2(newPos)
         if self.targetPos != newTarget:
-            self.targetPos = newTarget 
+            self.targetPos = newTarget
             dX = newPos[0] - self.pos.x
             dY = newPos[1] - self.pos.y
             
@@ -72,50 +81,65 @@ class Entity:
             self.velocity = pygame.math.Vector2(0, 0)
             done = True
         return done 
-    def getImageRect(self):
-        rect = self.images[self.imageKey].get_rect()
-        rect.topleft = self.pos
-        return rect
+    
     def setImage(self, newKey):
         self.imageKey = newKey
 
     def setPos(self, newPos):
-        self.pos = pygame.math.Vector2(newPos)
-        self.object.pos = pygame.math.Vector2(newPos)
-    def setCenter(self, newCenter):
-        newPos = newCenter - self.size/2
-        self.setPos(newPos)
-    
+        self.pos = pygame.math.Vector2(newPos) - self.size/2    
+        self.object.pos = pygame.math.Vector2(newPos) - self.size
     def move(self, movement, platforms):
         self.object.move(movement, platforms)
-        self.setPos(self.object.pos)
-        self.rect.topleft = self.object.pos
-
-    def render(self, display = pygame.display.set_mode()):
-        if self.imageKey:
-            img = flip(self.images[self.imageKey], self.flip)
-            imgWidth, imgHeight = img.get_size()
-            display.blit(img, self.pos) # + (imgWidth / 2, imgHeight / 2))
-        self.object.draw(display, [0, 0])
-        self.draw(display, [0, 0])
+        self.setPos(self.object.pos + self.size) 
+        
+    
     def onPress(self, mousePos):
-        print("pah")
+        pass
     def onHover(self, mousePos):
         pass
-    def update(self):
-        self.wasPressed = False
-        self.move(self.velocity, [])
-        
+
+    def checkIfPressed(self):
         mousePos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mousePos):
+        if self.getRect().collidepoint(mousePos):
             self.onHover(mousePos)
             if self.game.main.justPressed == "mouse1":
                 self.wasPressed = True
                 self.onPress(mousePos)
-    def draw(self, display, offset): #Debug och sånt
-        offsetPos = self.pos - offset
-        offsetRect = pygame.rect.Rect(offsetPos.x, offsetPos.y, self.size.x, self.size.y)
-        pygame.draw.rect(display,(133,23,21), offsetRect)    
+    def handleTextEvents(self, events):
+        ...
+    def update(self):
+        self.wasPressed = False
+        self.move(self.velocity, [])
+        self.checkIfPressed()
+        if len(self.game.textEvent) > 0:
+            self.handleTextEvents(self.game.textEvent)
+       
+    
+    def draw(self, display): #Debug och sånt
+        pygame.draw.rect(display,(133,23,21), self.getRect())    
+    
+    def render(self, display = pygame.display.set_mode()):
+        if self.imageKey:
+            #print("rendering", id(self.images[self.imageKey]))
+            img = flip(self.images[self.imageKey], self.flip)
+            imgWidth, imgHeight = img.get_size()
+            display.blit(img, self.pos - (imgWidth / 2, imgHeight / 2))
+            #pygame.draw.rect(display, (20,255,20), self.getImageRect()) #Debug
+        #self.object.draw(display, [0, 0]) #Debug
+        #self.draw(display) #Debug
+
+class Button(Entity):
+    def __init__(self, game, pos, size, buttonType):
+        super().__init__(game, pos, size, buttonType)
+        self.imageKey = "passive"
+    
+    def onHover(self, mousePos):
+        self.setImage("active")
+    
+    def update(self):
+        self.setImage("passive")
+        super().update()
+
 
 class Dragable(Entity):
     def __init__(self, game, pos, size, eType, snapRects):
@@ -124,17 +148,24 @@ class Dragable(Entity):
         self.snapRects = snapRects
     
     def snapToCenter(self):
-        collisions = getCollisions(self.rect, self.snapRects)
+        collisions = getCollisions(self.getRect(), self.snapRects)
         if len(collisions) > 0:
-            self.setCenter(collisions[0].center)
+            self.setPos(collisions[0].bottomright)
     def onPress(self, mousePos):
         self.getRelativeMousePos(mousePos)
+        print(f"center: {self.pos}, mouse pos: {mousePos}")
     
     def getRelativeMousePos(self, mousePos):
-        dX = self.pos.x - mousePos[0]
-        dY = self.pos.y - mousePos[1]
-        self.relativeMousePos = pygame.math.Vector2(dX, dY)
+        self.relativeMousePos = pygame.Vector2(self.pos) - pygame.Vector2(mousePos) + self.size/2
 
 class Rob(Entity):
     def __init__(self, game, pos, size):
         super().__init__(game, pos, size, "rob")
+    
+    def handleTextEvents(self, events):
+        for event in events:
+            print(event)
+            if event in self.images:
+                self.setImage(event)
+    
+    

@@ -27,6 +27,7 @@ class Game:
         self.textColor = (255,255,255)
         self.textDuration = 2
         self.textEvent = []
+        self.textImage = "none"
 
         #SPELSCENERNA
         self.images = {}
@@ -40,8 +41,9 @@ class Game:
         #self.draging = None
                     
         if self.draging:
-            
-            self.draging.setPos((mousePos[0] + self.draging.relativeMousePos.x, mousePos[1] + self.draging.relativeMousePos.y)) 
+            if not self.draging.relativeMousePos:
+                self.draging.relativeMousePos = (0, 0)
+            self.draging.setPos(pygame.Vector2(mousePos) + self.draging.relativeMousePos) 
             if self.main.justUp == "mouse1":
                 self.draging.snapToCenter()
                 self.draging = None
@@ -64,6 +66,7 @@ class Game:
             self.textColor = textData.color
             self.textDuration = textData.duration
             self.textEvent = textData.special
+            self.textImage = textData.profile
             
             saidText = text[0:min(currenCharacter, len(text))]
             self.dialogText = textwrap.wrap(saidText,CHARACTER_PER_ROW)
@@ -79,16 +82,19 @@ class Game:
         else:
             self.activeTextIndex = "Done"
             self.dialogText = None  
+        
     def updateAll(self):
         self.manageDraging()
         updateEntList(self.entities)   
 
-    def renderDialog(self, wrapedText, display):
+    def renderDialog(self, wrapedText, display=pygame.display.set_mode()):
         pygame.draw.rect(display,(0,0,0), self.textRect)
+        print(self.images["profiles"])
+        display.blit(self.images["profiles"][self.textImage], (TEXBOX_X, TEXTBOX_Y))
         y_offset = self.textRect.top
         for line in wrapedText:
             text = self.fonts[self.textSource].render(line, True, self.textColor)
-            display.blit(text, (self.textRect.left, y_offset))
+            display.blit(text, (self.textRect.left + 80 * GAME_SCALE, y_offset))
             y_offset += text.get_height()
         
     def renderAll(self):
@@ -112,6 +118,6 @@ class Game:
         self.events[self.currentEvent](self.firstLoop)
         self.updateAll()
         self.renderAll() 
-            
+        
         pygame.display.update()   
 

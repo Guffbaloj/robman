@@ -9,10 +9,10 @@ FPS = 60
 
 TEXT_SIZE = 25 * GAME_SCALE
 TEXTBOX_WIDTH = 500 * GAME_SCALE
-TEXTBOX_HEIGHT = 100 * GAME_SCALE
+TEXTBOX_HEIGHT = 80 * GAME_SCALE
 TEXBOX_X = WIDTH/2 - TEXTBOX_WIDTH/2
 TEXTBOX_Y = HEIGHT - TEXTBOX_HEIGHT - 80 * GAME_SCALE
-CHARACTER_PER_ROW = 60
+CHARACTER_PER_ROW = 45
 
 #Spelpunkter
 X_POINT = WIDTH // 200
@@ -30,7 +30,9 @@ def loadImage(path, size = 1):
     return image
 
 def flip(img,boolean=True):
-    return pygame.transform.flip(img,boolean,False)
+    image = pygame.transform.flip(img,boolean,False)
+    image.set_colorkey((0,0,0))
+    return image
 
 def pygameQuitEvent():
     for event in pygame.event.get():
