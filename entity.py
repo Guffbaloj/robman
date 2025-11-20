@@ -118,7 +118,7 @@ class Entity:
     def draw(self, display): #Debug och sånt
         pygame.draw.rect(display,(133,23,21), self.getRect())    
     
-    def render(self, display = pygame.display.set_mode()):
+    def render(self, display):
         if self.imageKey:
             #print("rendering", id(self.images[self.imageKey]))
             img = flip(self.images[self.imageKey], self.flip)
@@ -164,7 +164,6 @@ class Rob(Entity):
     
     def handleTextEvents(self, events):
         for event in events:
-            print(event)
             if event in self.images:
                 self.setImage(event)
     

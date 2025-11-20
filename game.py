@@ -87,14 +87,14 @@ class Game:
         self.manageDraging()
         updateEntList(self.entities)   
 
-    def renderDialog(self, wrapedText, display=pygame.display.set_mode()):
+    def renderDialog(self, wrapedText, display):
+        pygame.draw.rect(display,(0,0,0), makeRect(self.textRect.center, (TEXTBOX_WIDTH + 10 * GAME_SCALE, TEXTBOX_HEIGHT + 20 * GAME_SCALE)))
         pygame.draw.rect(display,(0,0,0), self.textRect)
-        print(self.images["profiles"])
         display.blit(self.images["profiles"][self.textImage], (TEXBOX_X, TEXTBOX_Y))
         y_offset = self.textRect.top
         for line in wrapedText:
             text = self.fonts[self.textSource].render(line, True, self.textColor)
-            display.blit(text, (self.textRect.left + 80 * GAME_SCALE, y_offset))
+            display.blit(text, (self.textRect.left + 90 * GAME_SCALE, y_offset))
             y_offset += text.get_height()
         
     def renderAll(self):
