@@ -13,10 +13,11 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "start"
+        self.currentEvent = "rob glide away"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
+                        "rob in again": self.robIn,
                         "car game": self.carGame}
         #BILDER OCH FONTER
         self.fonts = {"none": pygame.font.SysFont("arial", TEXT_SIZE),
@@ -39,7 +40,7 @@ class CarBuildGame(Game):
                      "excited": loadImage("robImages/excited.png", RSM),
                      "angry1": loadImage("robImages/angry1.png", RSM),
                      "angry2": loadImage("robImages/angry2.png", RSM),
-                     "side": loadImage("robright.png", RSM),}
+                     "side": loadImage("robImages/side1.png", RSM),}
         
         profiles = { "rob aah":loadImage("profiles/rob_aah.png"),
                      "rob angry1":loadImage("profiles/rob_angry1.png"),
@@ -145,16 +146,30 @@ class CarBuildGame(Game):
             self.rob.setPos(CENTER_POS)
             self.rob.setImage("side")
         
-        done = self.rob.glideToPos(ROB_CORNER, 2)
+        done = self.rob.glideToPos(CENTER_POS + scaledPos(WIDTH, 0), 2)
 
         if done:
             self.firstLoop = True
+            self.currentEvent = "rob in again"
+    def robIn(self, firstLoop):
+        if firstLoop:
+            self.rob.scale = 0.5
+            self.rl4.remove(self.rob)
+            self.rl1.append(self.rob)
+            self.rob.flip = True
+            self.rob.setImage("side")
+            self.rob.setPos(CENTER_POS + scaledPos(WIDTH, - HEIGHT / 5))
+            self.firstLoop = False
+        
+        done = self.rob.glideToPos(CENTER_POS + scaledPos(20, - HEIGHT / 5), 3)
+        
+        if done:
+            self.firstLoop = True
             self.currentEvent = "car game"
-    
+
     def carGame(self, firstLoop):
         if firstLoop:
-            self.rob.setPos(ROB_CORNER)
-            self.rob.setImage("neutral")
+            
             CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}

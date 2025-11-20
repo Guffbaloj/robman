@@ -29,7 +29,7 @@ class PhysicsObjects:
             if movement[1] > 0:
                 self.rect.bottom = block.top
                 collisionTypes["down"] = True
-            if movement[0] < 0:
+            if movement[1] < 0:
                 self.rect.top = block.bottom
                 collisionTypes["left"] = True
             self.pos.y = self.rect.y
@@ -53,9 +53,12 @@ class Entity:
         self.type = eType
         self.wasPressed = False
         self.targetPos = None
+        self.scale = 1
+    def resize(self, newScale):
+        self.object = PhysicsObjects(self.pos, self.size * newScale)
     
     def getRect(self):
-        rect = pygame.rect.Rect(0, 0, self.size.x, self.size.y)
+        rect = pygame.rect.Rect(0, 0, self.size.x * self.scale, self.size.y * self.scale)
         rect.center = self.pos
         return rect
     
@@ -90,8 +93,7 @@ class Entity:
         self.object.pos = pygame.math.Vector2(newPos) - self.size
     def move(self, movement, platforms):
         self.object.move(movement, platforms)
-        self.setPos(self.object.pos + self.size) 
-        
+        self.setPos(self.object.pos + self.size)     
     
     def onPress(self, mousePos):
         pass
@@ -122,6 +124,7 @@ class Entity:
         if self.imageKey:
             #print("rendering", id(self.images[self.imageKey]))
             img = flip(self.images[self.imageKey], self.flip)
+            img = scaleImage(img, self.scale)
             imgWidth, imgHeight = img.get_size()
             display.blit(img, self.pos - (imgWidth / 2, imgHeight / 2))
             #pygame.draw.rect(display, (20,255,20), self.getImageRect()) #Debug

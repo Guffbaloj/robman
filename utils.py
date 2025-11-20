@@ -34,6 +34,11 @@ def flip(img,boolean=True):
     image.set_colorkey((0,0,0))
     return image
 
+def scaleImage(img, scale):
+    image = pygame.transform.rotozoom(img, 0, scale)
+    image.set_colorkey((0,0,0))
+    return image
+
 def pygameQuitEvent():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
