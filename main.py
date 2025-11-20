@@ -7,7 +7,7 @@ print(pygame.version)
 pygame.init()
 class Main:
     def __init__(self):
-        self.window = pygame.display.set_mode((WIDTH,HEIGHT))
+        self.window = pygame.display.set_mode((WIDTH,HEIGHT), pygame.FULLSCREEN )
         self.images = {"base":loadImage("gurkman.png")}
         
         self.scenes = {"main menu":  MainMenu,
