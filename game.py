@@ -41,6 +41,7 @@ class Game:
         #self.draging = None
                     
         if self.draging:
+            self.draging.setVelocity((0, 0))
             if not self.draging.relativeMousePos:
                 self.draging.relativeMousePos = (0, 0)
             self.draging.setPos(pygame.Vector2(mousePos) + self.draging.relativeMousePos) 

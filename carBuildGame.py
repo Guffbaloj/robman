@@ -13,7 +13,7 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "rob glide away"
+        self.currentEvent = "car game"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -40,7 +40,10 @@ class CarBuildGame(Game):
                      "excited": loadImage("robImages/excited.png", RSM),
                      "angry1": loadImage("robImages/angry1.png", RSM),
                      "angry2": loadImage("robImages/angry2.png", RSM),
-                     "side": loadImage("robImages/side1.png", RSM),}
+                     "side": loadImage("robImages/side1.png", RSM),
+                     "dig1": loadImage("robImages/dig1.png", RSM),
+                     "dig1": loadImage("robImages/dig1.png", RSM),
+                     "dig2": loadImage("robImages/dig2.png", RSM)}
         
         profiles = { "rob aah":loadImage("profiles/rob_aah.png"),
                      "rob angry1":loadImage("profiles/rob_angry1.png"),
@@ -80,6 +83,9 @@ class CarBuildGame(Game):
         self.rl0.append(self.background1)
         self.rl2.append(self.background2)
         self.rl4.append(self.rob)
+        
+        self.floorRect = makeRect(CENTER_POS + scaledPos(0, HEIGHT / 2), (WIDTH, 20 * GAME_SCALE))
+        self.thrownItems = []
    
     def spawnCarparts(self, pos, partType,hitboxSize):
         
@@ -99,6 +105,34 @@ class CarBuildGame(Game):
             self.entities.append(carpart)
             self.rl3.append(carpart)
     
+    def spawnTrownCarpart(self, pos, strenght, partType, hitboxSize, imgidx):
+        pos = scaledPos(pos[0], pos[1])
+        hitboxSize = scaledPos(hitboxSize[0], hitboxSize[1])
+        object = Entity(self, pos, hitboxSize, "carpart")
+        object.velocity = pygame.Vector2(strenght)
+        object.friction = 0.99
+        object.setAcceleration((0, BASE_GRAVITY / 2))
+        object.setCollidables([self.floorRect])
+        object.setImage(partType + str(imgidx))
+        object.scale = 0.4
+        object.extra = partType
+        self.thrownItems.append(object)
+        self.entities.append(object)
+        self.rl1.append(object)
+    
+    def carpartFromEnt(self, ent):
+        snaprects = self.snaprects[ent.extra]
+        print(self.snaprects[ent.extra])
+        print(snaprects)
+        carpart = Dragable(self, ent.pos, ent.size, "carpart", snaprects)
+        carpart.setImage(ent.imageKey)
+        carpart.friction = 0.99
+        carpart.setVelocity(ent.velocity)
+        carpart.setAcceleration(ent.acceleration)
+        carpart.setAcceleration((0, BASE_GRAVITY))
+        carpart.setCollidables([self.floorRect])
+        return carpart
+
     def makeSnaprects(self, carCenter):
         self.snaprects = {"engine":[makeRect(carCenter, scaledPos(100, 100))],
                           "back":[makeRect(carCenter + scaledPos(-100, 0), scaledPos(100, 100))],
@@ -153,7 +187,7 @@ class CarBuildGame(Game):
             self.currentEvent = "rob in again"
     def robIn(self, firstLoop):
         if firstLoop:
-            self.rob.scale = 0.5
+            self.rob.scale = 0.4
             self.rl4.remove(self.rob)
             self.rl1.append(self.rob)
             self.rob.flip = True
@@ -169,18 +203,50 @@ class CarBuildGame(Game):
 
     def carGame(self, firstLoop):
         if firstLoop:
-            
+            if self.rob in self.rl4:
+                self.rob.scale = 0.4
+                self.rl4.remove(self.rob)
+                self.rl1.append(self.rob)
+                self.rob.flip = True
+            self.rob.setPos(CENTER_POS + scaledPos(20, - HEIGHT / 5))
             CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
             self.makeSnaprects(CAR_CENTER)
             
-            self.spawnCarparts((100,100),"engine",(75,75))
-            self.spawnCarparts((100,100),"back",(100,100))
-            self.spawnCarparts((100,100),"front",(100,100))
-            self.spawnCarparts((100,100),"wheel",(50,50))
-            self.spawnCarparts((100,100),"wheel",(50,50))
+            #self.spawnCarparts((100,100),"engine",(75,75))
+            #self.spawnCarparts((100,100),"back",(100,100))
+            #self.spawnCarparts((100,100),"front",(100,100))
+            #self.spawnCarparts((100,100),"wheel",(50,50))
+            #self.spawnCarparts((100,100),"wheel",(50,50))
             self.firstLoop = False
+            self.generalTimer = 0
+            #self.spawnTrownCarpart(self.rob.pos, (0, -16), "wheel", (50, 50), 1)
+            
+        
+        for item in self.thrownItems.copy():
+            if item.velocity.y >= 0:
+                carpart = self.carpartFromEnt(item)
+                
+                self.thrownItems.remove(item)
+                self.rl1.remove(item)
+                self.entities.remove(item)
+                self.rl3.append(carpart)
+                self.entities.append(carpart)
+
+        
+        #ska göras till en bättre animationskod sen
+        self.generalTimer = self.generalTimer + 0.20
+        if int(self.generalTimer) % 2 == 0:
+            self.rob.setImage("dig1")
+            if self.generalTimer > 20:
+                self.generalTimer = 0
+
+        elif int(self.generalTimer) % 2 == 1:
+            self.rob.setImage("dig2")
+        
+    
+
         
         
         
