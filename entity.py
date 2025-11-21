@@ -45,6 +45,8 @@ class Entity:
         self.game = game
         self.pos = pygame.math.Vector2(pos)
         self.velocity = pygame.math.Vector2(0, 0)
+        self.acceleration = pygame.math.Vector2(0, 0)
+        self.friction = 1
         self.size = pygame.math.Vector2(size) * GAME_SCALE
         self.object = PhysicsObjects(pos, size)
         self.images = game.images[eType]
@@ -54,6 +56,12 @@ class Entity:
         self.wasPressed = False
         self.targetPos = None
         self.scale = 1
+        self.platforms = []
+        self.extra = None
+
+    def setCollidables(self, platformList):
+        self.platforms = platformList
+
     def resize(self, newScale):
         self.object = PhysicsObjects(self.pos, self.size * newScale)
     
@@ -91,9 +99,19 @@ class Entity:
     def setPos(self, newPos):
         self.pos = pygame.math.Vector2(newPos) - self.size/2    
         self.object.pos = pygame.math.Vector2(newPos) - self.size
+    def setVelocity(self, newVel):
+        self.velocity = pygame.math.Vector2(newVel)
+        
+    def setAcceleration(self, newAcc):
+        self.acceleration = pygame.math.Vector2(newAcc)
+    
     def move(self, movement, platforms):
-        self.object.move(movement, platforms)
+        collided = self.object.move(movement, platforms)
         self.setPos(self.object.pos + self.size)     
+        if collided["down"] or collided["up"]:
+            self.velocity.y = 0
+        if collided["left"] or collided["right"]:
+            self.velocity.x = 0
     
     def onPress(self, mousePos):
         pass
@@ -111,7 +129,9 @@ class Entity:
         ...
     def update(self):
         self.wasPressed = False
-        self.move(self.velocity, [])
+        self.velocity += self.acceleration
+        self.velocity *= self.friction
+        self.move(self.velocity, self.platforms)
         self.checkIfPressed()
         if len(self.game.textEvent) > 0:
             self.handleTextEvents(self.game.textEvent)
@@ -175,18 +195,31 @@ class Dragable(Entity):
         super().__init__(game, pos, size, eType)
         self.relativeMousePos = None    
         self.snapRects = snapRects
+        self.hasSnaped = False
     
     def snapToCenter(self):
         collisions = getCollisions(self.getRect(), self.snapRects)
         if len(collisions) > 0:
-            self.setPos(collisions[0].bottomright)
+            self.setPos(collisions[0].center)
+            self.hasSnaped = True
     def onPress(self, mousePos):
         self.getRelativeMousePos(mousePos)
+        self.hasSnaped = False
         print(f"center: {self.pos}, mouse pos: {mousePos}")
     
     def getRelativeMousePos(self, mousePos):
         self.relativeMousePos = pygame.Vector2(self.pos) - pygame.Vector2(mousePos) + self.size/2
-
+    def update(self):
+        self.wasPressed = False
+        self.velocity += self.acceleration
+        self.velocity *= self.friction
+        if self.hasSnaped:
+            self.setVelocity((0, 0))
+        self.move(self.velocity, self.platforms)
+        self.checkIfPressed()
+        if len(self.game.textEvent) > 0:
+            self.handleTextEvents(self.game.textEvent)
+        
 class Rob(Entity):
     def __init__(self, game, pos, size):
         super().__init__(game, pos, size, "rob")
