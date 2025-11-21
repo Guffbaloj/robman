@@ -14,18 +14,17 @@ class MainMenu(Game):
         self.images = { "background": loadImage("meny.png",0.75),
                         "start":startButton}
         self.background = Background(self.images["background"])
-        self.startButton = Button(self, START_BUTTON_POS, (50, 50), "start")
-        self.startButton.setImage("passive")
-        self.entities.append(self.startButton)
+        startButton = Button(self, START_BUTTON_POS, (20, 40), "Start", self.startButtonPress)
+        startButton.font = pygame.font.SysFont("arial", 20)
+        self.entities.append(startButton)
         #SETUP
         self.rl0.append(self.background)
-        self.rlUI.append(self.startButton)
+        self.rlUI.append(startButton)
         
-
+    def startButtonPress(self):
+        self.main.loadNewScene("car game")
     
     def menu(self, firstLoop):
         if firstLoop:
             firstLoop = False
-        if self.startButton.wasPressed:
-            self.main.loadNewScene("car game")
         

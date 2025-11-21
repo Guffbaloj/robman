@@ -131,18 +131,44 @@ class Entity:
         #self.object.draw(display, [0, 0]) #Debug
         #self.draw(display) #Debug
 
-class Button(Entity):
-    def __init__(self, game, pos, size, buttonType):
-        super().__init__(game, pos, size, buttonType)
-        self.imageKey = "passive"
+class Button:
+    def __init__(self, game, pos, size, text, onPressFunction):
+        self.pos = pygame.Vector2(pos)
+        self.size = pygame.Vector2(size)
+        self.text = text
+        self.rect = makeRect(self.pos, self.size)
+        self.onPressFunction = onPressFunction
+        self.hovering = False
+        self.game = game
+        self.font = pygame.font.Font()
+        self.color = (0, 0, 0)
+        self.borderColor = (255, 255, 255)
+        self.textColor = (255, 255, 255)
+    def setFont(self, newFont):
+        self.font = newFont
     
-    def onHover(self, mousePos):
-        self.setImage("active")
+    def onHover(self):
+        self.hovering = True
     
     def update(self):
-        self.setImage("passive")
-        super().update()
-
+        mousePos = pygame.mouse.get_pos()
+        self.hovering = False
+        if self.rect.collidepoint(mousePos):
+            self.onHover()
+            if self.game.main.justPressed == "mouse1":
+                self.onPressFunction()
+    
+           
+    def render(self, display):
+        if self.hovering:
+            border = makeRect(self.pos, self.size * 1.05)
+            pygame.draw.rect(display, (0, 0, 0), border)
+            pygame.draw.rect(display, self.color, self.rect)
+        else:
+            pygame.draw.rect(display, self.color, self.rect)
+        if self.font and self.text:
+            text = self.font.render(self.text, True, self.textColor)
+            display.blit(text, (self.rect.left, self.rect.centery))
 
 class Dragable(Entity):
     def __init__(self, game, pos, size, eType, snapRects):
