@@ -99,10 +99,9 @@ class Game:
             y_offset += text.get_height()
         
     def renderAll(self):
+        self.window.fill((0,0,0)) 
         if self.rl0:
-            renderEntList(self.rl0, self.window)
-        else:
-            self.window.fill((255,255,255))    
+            renderEntList(self.rl0, self.window)            
         renderEntList(self.rl1, self.window)
         renderEntList(self.rl2, self.window)
         renderEntList(self.rl3, self.window)

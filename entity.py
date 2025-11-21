@@ -182,13 +182,14 @@ class Button:
     def render(self, display):
         if self.hovering:
             border = makeRect(self.pos, self.size * 1.05)
-            pygame.draw.rect(display, (0, 0, 0), border)
+            pygame.draw.rect(display, self.borderColor, border)
             pygame.draw.rect(display, self.color, self.rect)
         else:
             pygame.draw.rect(display, self.color, self.rect)
+        
         if self.font and self.text:
             text = self.font.render(self.text, True, self.textColor)
-            display.blit(text, (self.rect.left, self.rect.centery))
+            display.blit(text, (self.rect.left, self.rect.top))
 
 class Dragable(Entity):
     def __init__(self, game, pos, size, eType, snapRects):

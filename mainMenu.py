@@ -14,13 +14,29 @@ class MainMenu(Game):
         self.images = { "background": loadImage("meny.png",0.75),
                         "start":startButton}
         self.background = Background(self.images["background"])
-        startButton = Button(self, START_BUTTON_POS, (20, 40), "Start", self.startButtonPress)
-        startButton.font = pygame.font.SysFont("arial", 20)
-        self.entities.append(startButton)
+        
+        buttonfont = pygame.font.SysFont("arial", 40)
+        
+        button1 = Button(self, START_BUTTON_POS, (80, 50), "Start", self.startButtonPress)
+        button1.font = buttonfont
+        button2 = Button(self, START_BUTTON_POS + scaledPos(0, 60), (120, 50), "Options", self.optionsButtonPress)
+        button2.font = buttonfont
+        button3 = Button(self, START_BUTTON_POS + scaledPos(0, 120), (65, 50), "Quit", self.quitButtonPress)
+        button3.font = buttonfont
+        
+        self.entities.append(button1)
+        self.entities.append(button2)
+        self.entities.append(button3)
+        
         #SETUP
         self.rl0.append(self.background)
-        self.rlUI.append(startButton)
-        
+        self.rlUI.append(button1)
+        self.rlUI.append(button2)
+        self.rlUI.append(button3)
+    def optionsButtonPress(self):
+        ...
+    def quitButtonPress(self):
+        pygame.quit()  
     def startButtonPress(self):
         self.main.loadNewScene("car game")
     

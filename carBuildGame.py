@@ -221,7 +221,7 @@ class CarBuildGame(Game):
             #self.spawnCarparts((100,100),"wheel",(50,50))
             self.firstLoop = False
             self.generalTimer = 0
-            #self.spawnTrownCarpart(self.rob.pos, (0, -16), "wheel", (50, 50), 1)
+            self.spawnTrownCarpart(self.rob.pos, (0, -16), "wheel", (50, 50), 1)
             
         
         for item in self.thrownItems.copy():
