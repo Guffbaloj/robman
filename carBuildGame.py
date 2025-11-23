@@ -10,11 +10,12 @@ ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
 ROB_CORNER = CENTER_POS + scaledPos(160, 110)
 ROB_THROW_POS = CENTER_POS + scaledPos(-50, - HEIGHT / 5)
 BUTTON_POS = (WIDTH - 100 * GAME_SCALE, HEIGHT - 80 * GAME_SCALE)
+CARPARTSS = ["engine", "back", "front", "wheel"]
 class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "car game"
+        self.currentEvent = "start"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -81,7 +82,7 @@ class CarBuildGame(Game):
         self.rob = Rob(self, (0,400),(100,100))
         self.entities.append(self.rob)
 
-        self.builtCar = {}
+        self.builtCar = []
 
         #SETUP
         self.background1 = Background(self.images["background1"])
@@ -95,6 +96,8 @@ class CarBuildGame(Game):
         self.thrownJunk = []
         self.spawningCarparts = False
         self.carpartSpawnTimer = 0
+        self.carpartToThrow = 0
+    
    
     def spawnCarparts(self, pos, partType,hitboxSize):
         
@@ -256,7 +259,7 @@ class CarBuildGame(Game):
             self.rob.setPos(CENTER_POS + scaledPos(WIDTH, - HEIGHT / 5))
             self.firstLoop = False
         
-        done = self.rob.glideToPos(ROB_THROW_POS)
+        done = self.rob.glideToPos(ROB_THROW_POS, 3)
         
         if done:
             self.firstLoop = True
@@ -287,13 +290,17 @@ class CarBuildGame(Game):
 
         if self.spawningCarparts:  
             self.carpartSpawnTimer += 1
+            if self.carpartToThrow > 3:
+                self.carpartToThrow = 3
             print(self.carpartSpawnTimer)
             tajm = 32
             if int(self.carpartSpawnTimer) % tajm == 0:
-                done = self.throwCarparts(int(self.carpartSpawnTimer) // tajm, "front", ROB_THROW_POS + (randrange(-50, -40), -10), (80, 80))
+                carpartType = CARPARTSS[self.carpartToThrow]
+                done = self.throwCarparts(int(self.carpartSpawnTimer) // tajm, carpartType, ROB_THROW_POS + (randrange(-50, -40), -10), (80, 80))
                 if done:
                     self.spawningCarparts = False
                     self.carpartSpawnTimer = 0
+                    self.carpartToThrow += 1
         
         self.handleThrownItems()
         self.robTrowAnimation(self.generalTimer)
