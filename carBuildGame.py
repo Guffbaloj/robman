@@ -1,6 +1,6 @@
 import pygame
 from game import Game
-from entity import Background, Entity, Dragable, Rob
+from entity import *
 from utils import *
 from random import randrange
 from dialog import robCarDialog
@@ -9,6 +9,7 @@ from dialog import robCarDialog
 ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
 ROB_CORNER = CENTER_POS + scaledPos(160, 110)
 ROB_THROW_POS = CENTER_POS + scaledPos(-50, - HEIGHT / 5)
+BUTTON_POS = (WIDTH - 100 * GAME_SCALE, HEIGHT - 80 * GAME_SCALE)
 class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
@@ -92,6 +93,8 @@ class CarBuildGame(Game):
         self.floorRect = makeRect(CENTER_POS + scaledPos(0, HEIGHT / 2), (WIDTH, 20 * GAME_SCALE))
         self.thrownItems = []
         self.thrownJunk = []
+        self.spawningCarparts = False
+        self.carpartSpawnTimer = 0
    
     def spawnCarparts(self, pos, partType,hitboxSize):
         
@@ -158,6 +161,48 @@ class CarBuildGame(Game):
         for carpart in self.snaprects:
             for snaprect in self.snaprects[carpart]:
                 self.snaprectsList.append(snaprect)
+    
+    def askForMoreCarparts(self):
+        if not self.spawningCarparts:
+            print("wooouuu")
+            self.spawningCarparts = True
+            self.carpartSpawnTimer = 0
+        else:
+            print("vänta lite mannen!")
+    
+    def handleThrownItems(self):
+        for item in self.thrownItems.copy():
+            if item.velocity.y >= 0:
+                carpart = self.carpartFromEnt(item)
+                
+                self.thrownItems.remove(item)
+                self.rl1.remove(item)
+                self.entities.remove(item)
+                self.rl3.append(carpart)
+                self.entities.append(carpart)
+        
+        for item in self.thrownJunk.copy():
+            if item.pos.x > WIDTH or item.pos.y > HEIGHT:
+                self.entities.remove(item)
+                self.rl1.remove(item)
+                self.thrownJunk.remove(item)
+    
+    def robTrowAnimation(self, timer): #Måste bli snyggare framöver
+        if int(timer) % 2 == 0:
+            self.rob.setImage("dig1")
+        elif int(timer) % 2 == 1:
+            self.rob.setImage("dig2")
+    
+    def throwCarparts(self, idx, partType, pos, size):
+        key = partType + str(idx)
+        xPos = randrange(-50,50)+pos[0]
+        yPos = randrange(-50, 50) + pos[1]
+        try:
+            img = self.images["carpart"][key]
+        except:
+            return True
+        self.spawnTrownCarpart(pos, (randrange(-4, 4), -26), partType, size, idx)
+        return False
     #===========================================
     #                SPELETS SCENER
     #===========================================
@@ -224,54 +269,49 @@ class CarBuildGame(Game):
                 self.rl4.remove(self.rob)
                 self.rl1.append(self.rob)
                 self.rob.flip = True
+
             self.rob.setPos(ROB_THROW_POS)
             CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
             self.makeSnaprects(CAR_CENTER)
             
-            #self.spawnCarparts((100,100),"engine",(75,75))
-            #self.spawnCarparts((100,100),"back",(100,100))
-            #self.spawnCarparts((100,100),"front",(100,100))
-            #self.spawnCarparts((100,100),"wheel",(50,50))
-            #self.spawnCarparts((100,100),"wheel",(50,50))
+            button = Button(self, BUTTON_POS, (240, 40), "BE OM FLER DELAR", self.askForMoreCarparts)
+            button.font = self.fonts["rob"]
+            self.rlUI.append(button)
+            self.entities.append(button)
             self.firstLoop = False
             self.generalTimer = 0
-            self.spawnTrownCarpart(self.rob.pos, (randrange(-3, 4), -24), "wheel", (50, 50), 1)
-            
+            self.spawningCarparts = True
+            self.carpartSpawnTimer = 0
+
+        if self.spawningCarparts:  
+            self.carpartSpawnTimer += 1
+            print(self.carpartSpawnTimer)
+            tajm = 32
+            if int(self.carpartSpawnTimer) % tajm == 0:
+                done = self.throwCarparts(int(self.carpartSpawnTimer) // tajm, "front", ROB_THROW_POS + (randrange(-50, -40), -10), (80, 80))
+                if done:
+                    self.spawningCarparts = False
+                    self.carpartSpawnTimer = 0
         
-        for item in self.thrownItems.copy():
-            if item.velocity.y >= 0:
-                carpart = self.carpartFromEnt(item)
-                
-                self.thrownItems.remove(item)
-                self.rl1.remove(item)
-                self.entities.remove(item)
-                self.rl3.append(carpart)
-                self.entities.append(carpart)
-        for item in self.thrownJunk.copy():
-            if item.pos.x > WIDTH or item.pos.y > HEIGHT:
-                self.entities.remove(item)
-                self.rl1.remove(item)
-                self.thrownJunk.remove(item)
-        print(len(self.thrownJunk))
-        #ska göras till en bättre animationskod sen
+        self.handleThrownItems()
+        self.robTrowAnimation(self.generalTimer)
+
+        
+        self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
         
         self.generalTimer = self.generalTimer + 0.10
-        if int(self.generalTimer) % 2 == 0:
-            self.rob.setImage("dig1")
-            
-            if self.generalTimer > 2:
-                self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
-            
-                #self.spawnTrownCarpart(self.rob.pos, (randrange(-3, 4), -24), "wheel", (50, 50), 1)
-                self.generalTimer = 0
-
-        elif int(self.generalTimer) % 2 == 1:
-            self.rob.setImage("dig2")
+        if self.generalTimer > 10000:
+            self.generalTimer = 0
+        
         
     
 
-        
+ #self.spawnCarparts((100,100),"engine",(75,75))
+#self.spawnCarparts((100,100),"back",(100,100))
+#self.spawnCarparts((100,100),"front",(100,100))
+#self.spawnCarparts((100,100),"wheel",(50,50))
+#self.spawnCarparts((100,100),"wheel",(50,50))       
         
         
