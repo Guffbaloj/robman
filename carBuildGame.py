@@ -8,7 +8,7 @@ from dialog import robCarDialog
 #alla possitioner rob glider till
 ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
 ROB_CORNER = CENTER_POS + scaledPos(160, 110)
-
+ROB_THROW_POS = CENTER_POS + scaledPos(-50, - HEIGHT / 5)
 class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
@@ -44,7 +44,11 @@ class CarBuildGame(Game):
                      "dig1": loadImage("robImages/dig1.png", RSM),
                      "dig1": loadImage("robImages/dig1.png", RSM),
                      "dig2": loadImage("robImages/dig2.png", RSM)}
-        
+        junk ={"j1":loadImage("junk/j1.png"), 
+               "j2":loadImage("junk/j2.png"),
+               "j3":loadImage("junk/j3.png"),
+               "j4":loadImage("junk/j4.png"),
+               "j5":loadImage("junk/j5.png"),}
         profiles = { "rob aah":loadImage("profiles/rob_aah.png"),
                      "rob angry1":loadImage("profiles/rob_angry1.png"),
                      "rob angry2":loadImage("profiles/rob_angry2.png"),
@@ -62,6 +66,7 @@ class CarBuildGame(Game):
                        "carpart": carpartImages,
                        "rob": robImages,
                        "profiles": profiles,
+                       "junk": junk,
                        "background1": loadImage("carFactory.png"),
                        "background2": loadImage("bg1.png"),
                        }
@@ -86,6 +91,7 @@ class CarBuildGame(Game):
         
         self.floorRect = makeRect(CENTER_POS + scaledPos(0, HEIGHT / 2), (WIDTH, 20 * GAME_SCALE))
         self.thrownItems = []
+        self.thrownJunk = []
    
     def spawnCarparts(self, pos, partType,hitboxSize):
         
@@ -104,6 +110,16 @@ class CarBuildGame(Game):
             self.carparts[partType].append(carpart)
             self.entities.append(carpart)
             self.rl3.append(carpart)
+    
+    def throwJunk(self, pos, strenght, objIndx):
+        pos = scaledPos(pos[0], pos[1])
+        object = Entity(self, pos, (2, 2), "junk")
+        object.setVelocity(strenght)
+        object.setAcceleration((0, BASE_GRAVITY / 2))
+        object.setImage("j"+str(objIndx + 1))
+        self.entities.append(object)
+        self.rl1.append(object)
+        self.thrownJunk.append(object)
     
     def spawnTrownCarpart(self, pos, strenght, partType, hitboxSize, imgidx):
         pos = scaledPos(pos[0], pos[1])
@@ -127,7 +143,7 @@ class CarBuildGame(Game):
         carpart = Dragable(self, ent.pos, ent.size, "carpart", snaprects)
         carpart.setImage(ent.imageKey)
         carpart.friction = 0.99
-        carpart.setVelocity(ent.velocity)
+        carpart.setVelocity((0, ent.velocity.y))
         carpart.setAcceleration(ent.acceleration)
         carpart.setAcceleration((0, BASE_GRAVITY))
         carpart.setCollidables([self.floorRect])
@@ -195,7 +211,7 @@ class CarBuildGame(Game):
             self.rob.setPos(CENTER_POS + scaledPos(WIDTH, - HEIGHT / 5))
             self.firstLoop = False
         
-        done = self.rob.glideToPos(CENTER_POS + scaledPos(20, - HEIGHT / 5), 3)
+        done = self.rob.glideToPos(ROB_THROW_POS)
         
         if done:
             self.firstLoop = True
@@ -208,7 +224,7 @@ class CarBuildGame(Game):
                 self.rl4.remove(self.rob)
                 self.rl1.append(self.rob)
                 self.rob.flip = True
-            self.rob.setPos(CENTER_POS + scaledPos(20, - HEIGHT / 5))
+            self.rob.setPos(ROB_THROW_POS)
             CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
             self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
@@ -221,7 +237,7 @@ class CarBuildGame(Game):
             #self.spawnCarparts((100,100),"wheel",(50,50))
             self.firstLoop = False
             self.generalTimer = 0
-            self.spawnTrownCarpart(self.rob.pos, (0, -16), "wheel", (50, 50), 1)
+            self.spawnTrownCarpart(self.rob.pos, (randrange(-3, 4), -24), "wheel", (50, 50), 1)
             
         
         for item in self.thrownItems.copy():
@@ -233,13 +249,22 @@ class CarBuildGame(Game):
                 self.entities.remove(item)
                 self.rl3.append(carpart)
                 self.entities.append(carpart)
-
-        
+        for item in self.thrownJunk.copy():
+            if item.pos.x > WIDTH or item.pos.y > HEIGHT:
+                self.entities.remove(item)
+                self.rl1.remove(item)
+                self.thrownJunk.remove(item)
+        print(len(self.thrownJunk))
         #ska göras till en bättre animationskod sen
-        self.generalTimer = self.generalTimer + 0.20
+        
+        self.generalTimer = self.generalTimer + 0.10
         if int(self.generalTimer) % 2 == 0:
             self.rob.setImage("dig1")
-            if self.generalTimer > 20:
+            
+            if self.generalTimer > 2:
+                self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
+            
+                #self.spawnTrownCarpart(self.rob.pos, (randrange(-3, 4), -24), "wheel", (50, 50), 1)
                 self.generalTimer = 0
 
         elif int(self.generalTimer) % 2 == 1:
