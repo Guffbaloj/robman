@@ -3,7 +3,7 @@ from game import Game
 from entity import *
 from utils import *
 from random import randrange
-from dialog import robCarDialog
+from carGameDialog import robCarDialog, askRob1
 
 #alla possitioner rob glider till
 ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
@@ -15,12 +15,13 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "start"
+        self.currentEvent = "car game"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
                         "rob in again": self.robIn,
-                        "car game": self.carGame}
+                        "car game": self.carGame,
+                        "asking rob": self.askingRobForParts}
         #BILDER OCH FONTER
         self.fonts = {"none": pygame.font.SysFont("arial", TEXT_SIZE),
                       "rob": pygame.font.SysFont("arial", TEXT_SIZE)}
@@ -168,8 +169,9 @@ class CarBuildGame(Game):
     def askForMoreCarparts(self):
         if not self.spawningCarparts:
             print("wooouuu")
-            self.spawningCarparts = True
-            self.carpartSpawnTimer = 0
+            self.firstLoop = True
+            self.currentEvent = "asking rob"
+            
         else:
             print("vänta lite mannen!")
     
@@ -209,6 +211,17 @@ class CarBuildGame(Game):
     #===========================================
     #                SPELETS SCENER
     #===========================================
+    def askingRobForParts(self, fistLoop):
+        if fistLoop:
+            self.activeTextIndex = 0
+            self.firstLoop = False
+        done = self.handleDialog(askRob1)
+        if done:
+            self.spawningCarparts = True
+            self.carpartSpawnTimer = 0
+            self.currentEvent = "car game"
+            
+            
     def robArives(self, firstLoop):
         if firstLoop:
             self.rob.setPos(ROB_SIDE_ENTRANCE)
@@ -232,11 +245,11 @@ class CarBuildGame(Game):
         if self.generalTimer < 1 * FPS:
             self.generalTimer += 1
         else:
-            self.handleDialog(robCarDialog) #slutar med att self.activeTextIndex sätts till "Done"
+            done = self.handleDialog(robCarDialog) #slutar med att self.activeTextIndex sätts till "Done"
             
-        if self.activeTextIndex == "Done":
-            self.firstLoop = True
-            self.currentEvent = "rob glide away"
+            if done:
+                self.firstLoop = True
+                self.currentEvent = "rob glide away"
         
     def robAway(self, firstLoop):
         if firstLoop:
@@ -285,7 +298,7 @@ class CarBuildGame(Game):
             self.entities.append(button)
             self.firstLoop = False
             self.generalTimer = 0
-            self.spawningCarparts = True
+            self.spawningCarparts = False
             self.carpartSpawnTimer = 0
 
         if self.spawningCarparts:  

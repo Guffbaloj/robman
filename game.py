@@ -80,9 +80,11 @@ class Game:
                 else:
                     self.activeTextIndex += 1
                     self.textTimer = 0
+            return False
         else:
-            self.activeTextIndex = "Done"
-            self.dialogText = None  
+            self.dialogText = None 
+            return True
+             
         
     def updateAll(self):
         self.manageDraging()

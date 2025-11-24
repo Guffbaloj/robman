@@ -1,10 +1,3 @@
-robCarIntro = ["så...","då var vi här","bilfabriken",
-"(hör bankande ljud)", "Shit,","Det blav just högsta prio att du bygger en bil",
-"det dröjer nog inte så värst länge tills att de river den där dörren ska du se",
-"...","men du har nog tid att bygga en bil från grunden","du är nog snabb...",
-"hoppas jag...","uhm, men om du inte är det vill jag påminna dig om att de inte var särkiljt glada med vad vi gjorde i förra delen av spelet",
-"du vet vilken jag talar om"]
-
 #En dialogbit består av flera ordböcker. 
 #Godtagbara nycklar är:
 #"text"      {string} Det som sägs
@@ -47,5 +40,14 @@ robCarDialog = [
     DL("...", profile= "rob huh2"),
     DL("Bygg fort, innan han upptäcker dörrhandtaget", profile= "rob huh3"),
 ]
+askrob0 = [DL("Jadu, denna skräphög verkar vara en hög med skräp."),
+           DL("Något motorliknande borde det väll finnas?"),
+           DL("Ahaa!")]
 
+askRob1 = [DL("Sitter motorn?"),
+           DL("Fler bitar säger du? Vadå fler bitar? Behövs det fler bitar till en bil än en motor."),
+           DL("vänta! Här är några du kan använda!")]
+
+askRob2 = [DL("Vad du ska skifta ämne hela tiden"),
+           DL("")]
  #jag vet att dialog egentligen bara är två personer som talar, men lite får ni tåla
