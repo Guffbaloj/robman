@@ -63,7 +63,8 @@ class Entity:
         self.platforms = platformList
 
     def resize(self, newScale):
-        self.object = PhysicsObjects(self.pos, self.size * newScale)
+        newSize = (int(self.size[0] * newScale), int(self.size[1] * newScale))
+        self.object = PhysicsObjects(self.pos, newSize)
     
     def getRect(self):
         rect = pygame.rect.Rect(0, 0, self.size.x * self.scale, self.size.y * self.scale)

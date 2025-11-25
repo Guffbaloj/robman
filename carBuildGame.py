@@ -35,7 +35,16 @@ class CarBuildGame(Game):
                                 "front1":loadImage("carparts/front1.png",0.5),
                                 "front2":loadImage("carparts/front2.png",0.5),
                                 "front3":loadImage("carparts/front3.png",0.5),
-                                "wheel1":loadImage("carparts/wheel1.png",0.5),} 
+                                "wheel0":loadImage("carparts/wheel0.png",0.5),
+                                "wheel1":loadImage("carparts/wheel1.png",0.5),
+                                "wheel2":loadImage("carparts/wheel2.png",0.5),
+                                "wheel3":loadImage("carparts/wheel3.png",0.5),
+                                "wheel4":loadImage("carparts/wheel4.png",0.5),
+                                "wheel5":loadImage("carparts/wheel5.png",0.5),
+                                "wheel6":loadImage("carparts/wheel6.png",0.5),
+                                "wheel7":loadImage("carparts/wheel7.png",0.5),
+                                "wheel8":loadImage("carparts/wheel8.png",0.5),
+                                "wheel9":loadImage("carparts/wheel9.png",0.5),} 
         RSM = 0.7
         robImages = { "worry1": loadImage("robImages/worry1.png", RSM),
                      "worry2": loadImage("robImages/worry2.png", RSM),
@@ -99,6 +108,7 @@ class CarBuildGame(Game):
         self.floorRect = makeRect(CENTER_POS + scaledPos(0, HEIGHT / 2), (WIDTH, 20 * GAME_SCALE))
         self.thrownItems = []
         self.thrownJunk = []
+        self.junkTimer = 0
         self.spawningCarparts = False
         self.carpartSpawnTimer = 0
         self.carpartToThrow = 0
@@ -142,7 +152,7 @@ class CarBuildGame(Game):
         object.setAcceleration((0, BASE_GRAVITY / 2))
         object.setCollidables([self.floorRect])
         object.setImage(partType + str(imgidx))
-        object.scale = 0.4
+        object.scale = 0.5
         object.extra = partType
         self.thrownItems.append(object)
         self.entities.append(object)
@@ -159,6 +169,7 @@ class CarBuildGame(Game):
         carpart.setAcceleration(ent.acceleration)
         carpart.setAcceleration((0, BASE_GRAVITY))
         carpart.setCollidables([self.floorRect])
+        self.carparts[ent.extra].append(carpart)
         return carpart
 
     def makeSnaprects(self, carCenter):
@@ -300,7 +311,6 @@ class CarBuildGame(Game):
 
             self.rob.setPos(ROB_THROW_POS)
             CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
-            self.builtCar = [None, None, None, None, None]
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
             self.makeSnaprects(CAR_CENTER)
             
@@ -315,26 +325,37 @@ class CarBuildGame(Game):
             self.carpartTalkIdx = 0
             self.askForMoreCarparts()
             self.showTalkButtons = False
-
+            self.junkTimer = 0
+        self.junkTimer += 1
         if self.spawningCarparts:  
-            self.carpartSpawnTimer += 1
-            if self.carpartToThrow > 3:
-                self.carpartToThrow = 3
-            print(self.carpartSpawnTimer)
-            tajm = 32
-            if int(self.carpartSpawnTimer) % tajm == 0:
-                carpartType = CARPARTSS[self.carpartToThrow]
-                done = self.throwCarparts(int(self.carpartSpawnTimer) // tajm, carpartType, ROB_THROW_POS + (randrange(-50, -40), -10), (80, 80))
-                if done:
-                    self.spawningCarparts = False
-                    self.carpartSpawnTimer = 0
-                    self.carpartToThrow += 1
+            if self.carpartTalkIdx == 4:
+                self.spawnTrownCarpart(ROB_THROW_POS, (randrange(-4, 4), -26), "wheel", (80, 80), 0)
+                self.spawningCarparts = False
+            else:
+                self.carpartSpawnTimer += 1
+                if self.carpartToThrow > 3:
+                    self.carpartToThrow = 3
+                print(self.carpartSpawnTimer)
+                tajm = 32
+                if int(self.carpartSpawnTimer) % tajm == 0:
+                    carpartType = CARPARTSS[self.carpartToThrow]
+                    done = self.throwCarparts(int(self.carpartSpawnTimer) // tajm, carpartType, ROB_THROW_POS + (randrange(-50, -40), -10), (80, 80))
+                    if done:
+                        self.spawningCarparts = False
+                        self.carpartSpawnTimer = 0
+                        self.carpartToThrow += 1
         
         self.handleThrownItems()
         self.robTrowAnimation(self.generalTimer)
 
-        
-        self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
+        for carpartType in CARPARTSS:
+            for carpart in self.carparts[carpartType]:
+                carpart.scale = 1
+                if carpart.hasSnaped:
+                    carpart.scale = 1
+                    self.builtCar[carpartType] = carpart.imageKey
+        if self.junkTimer % 20 == 0:
+            self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
         
 
         self.generalTimer = self.generalTimer + 0.10
@@ -343,7 +364,8 @@ class CarBuildGame(Game):
             self.showTalkButtons = True
         if self.generalTimer > 10000:
             self.generalTimer = 0
-        
+        #print(self.carparts)
+        print(self.builtCar)
         
     
 

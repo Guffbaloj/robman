@@ -26,7 +26,7 @@ def scaledPos(x, y):
 def loadImage(path, size = 1):
     image = pygame.image.load(BASE_PATH+path)
     height, width = image.get_size()
-    image = pygame.transform.scale(image,(height*size * GAME_SCALE, width*size * GAME_SCALE))
+    image = pygame.transform.scale(image,(int(height*size * GAME_SCALE), int(width*size * GAME_SCALE)))
     image.convert()
     image.set_colorkey((0,0,0))
     return image
