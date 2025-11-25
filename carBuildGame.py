@@ -87,7 +87,7 @@ class CarBuildGame(Game):
         self.rob = Rob(self, (0,400),(100,100))
         self.entities.append(self.rob)
 
-        self.builtCar = []
+        self.builtCar = {"engine": None, "back":None, "front":None, "wheel1":None, "wheel2":None}
 
         #SETUP
         self.background1 = Background(self.images["background1"])
@@ -162,17 +162,17 @@ class CarBuildGame(Game):
         return carpart
 
     def makeSnaprects(self, carCenter):
-        self.snaprects = {"engine":[makeRect(carCenter, scaledPos(100, 100))],
-                          "back":[makeRect(carCenter + scaledPos(-100, 0), scaledPos(100, 100))],
-                         "front":[makeRect(carCenter + scaledPos(100, 0), scaledPos(100, 100))],
-                         "wheel":[makeRect(carCenter + scaledPos(120, 80), scaledPos(50, 50)),
-                                  makeRect(carCenter + scaledPos(-100, 80), scaledPos(50, 50))]}
+        self.snaprects = {"engine":[SnapRect(carCenter, scaledPos(100, 100))],
+                          "back":[SnapRect(carCenter + scaledPos(-100, 0), scaledPos(100, 100))],
+                         "front":[SnapRect(carCenter + scaledPos(100, 0), scaledPos(100, 100))],
+                         "wheel":[SnapRect(carCenter + scaledPos(120, 80), scaledPos(50, 50)),
+                                  SnapRect(carCenter + scaledPos(-100, 80), scaledPos(50, 50))]}
         for carpart in self.snaprects:
             for snaprect in self.snaprects[carpart]:
                 self.snaprectsList.append(snaprect)
     
     def askForMoreCarparts(self):
-        if not self.spawningCarparts:
+        if not self.spawningCarparts and self.currentEvent == "car game":
             print("wooouuu")
             self.firstLoop = True
             self.currentEvent = "asking rob"
@@ -220,6 +220,7 @@ class CarBuildGame(Game):
         if fistLoop:
             self.activeTextIndex = 0
             self.firstLoop = False
+            self.showTalkButtons = False
             self.rob.setImage("neutral")
             if self.carpartTalkIdx >= len(carpartDialog):
                 self.carpartTalkIdx = len(carpartDialog) - 1
@@ -228,6 +229,7 @@ class CarBuildGame(Game):
         if done:
             self.spawningCarparts = True
             self.carpartSpawnTimer = 0
+            self.generalTimer = 0
             self.carpartTalkIdx += 1
             self.currentEvent = "car game"
             
@@ -304,7 +306,7 @@ class CarBuildGame(Game):
             
             button = Button(self, BUTTON_POS, (240, 40), "BE OM FLER DELAR", self.askForMoreCarparts)
             button.font = self.fonts["rob"]
-            self.rlUI.append(button)
+            self.rlDB.append(button)
             self.entities.append(button)
             self.firstLoop = False
             self.generalTimer = 0
@@ -312,6 +314,7 @@ class CarBuildGame(Game):
             self.carpartSpawnTimer = 0
             self.carpartTalkIdx = 0
             self.askForMoreCarparts()
+            self.showTalkButtons = False
 
         if self.spawningCarparts:  
             self.carpartSpawnTimer += 1
@@ -333,7 +336,11 @@ class CarBuildGame(Game):
         
         self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
         
+
         self.generalTimer = self.generalTimer + 0.10
+        
+        if self.generalTimer > 20:
+            self.showTalkButtons = True
         if self.generalTimer > 10000:
             self.generalTimer = 0
         

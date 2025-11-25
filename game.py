@@ -12,11 +12,13 @@ class Game:
         self.draging = None
         self.generalTimer = 0
         #RENDERLAYERS
+        self.showTalkButtons = True
         self.rl0 = [] #bakgrunden
         self.rl1 = [] #lagret precis framför bakgrunden
         self.rl2 = [] 
         self.rl3 = [] 
         self.rl4 = [] # Vanligen robs lager
+        self.rlDB = [] # DIalogknapparna
         self.rlUI = [] # lagret för UI
         #DIALOG OCH TEXTDISPLAY
         self.dialogText = None
@@ -104,14 +106,15 @@ class Game:
         self.window.fill((0,0,0)) 
         if self.rl0:
             renderEntList(self.rl0, self.window)            
-        renderEntList(self.rl1, self.window)
+        renderEntList(self.rl1, self.window) 
         renderEntList(self.rl2, self.window)
         renderEntList(self.rl3, self.window)
         renderEntList(self.rl4, self.window)
-        if self.dialogText:
-            self.renderDialog(self.dialogText, self.window)
-        if self.draging:
-            self.draging.render(self.window)
+        
+        if self.showTalkButtons: renderEntList(self.rlDB, self.window)
+        if self.dialogText: self.renderDialog(self.dialogText, self.window)
+        if self.draging: self.draging.render(self.window)
+            
         renderEntList(self.rlUI, self.window)    
         
     

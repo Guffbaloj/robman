@@ -151,6 +151,12 @@ class Entity:
         #self.object.draw(display, [0, 0]) #Debug
         #self.draw(display) #Debug
 
+class SnapRect:
+    def __init__(self, pos, size):
+        self.pos = pygame.Vector2(pos)
+        self.size = pygame.Vector2(size)
+        self.rect = makeRect(pos, size)
+        self.occupant = None
 class Button:
     def __init__(self, game, pos, size, text, onPressFunction):
         self.pos = pygame.Vector2(pos)
@@ -199,10 +205,14 @@ class Dragable(Entity):
         self.hasSnaped = False
     
     def snapToCenter(self):
-        collisions = getCollisions(self.getRect(), self.snapRects)
-        if len(collisions) > 0:
-            self.setPos(collisions[0].center)
-            self.hasSnaped = True
+        for sRect in self.snapRects:
+            if self.getRect().colliderect(sRect.rect):
+                self.setPos(sRect.pos)
+                self.hasSnaped = True
+                if sRect.occupant and not sRect.occupant == self:
+                    sRect.occupant.hasSnaped = False
+                sRect.occupant = self
+                break
     def onPress(self, mousePos):
         self.getRelativeMousePos(mousePos)
         self.hasSnaped = False
