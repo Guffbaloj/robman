@@ -3,7 +3,7 @@ from game import Game
 from entity import *
 from utils import *
 from random import randrange
-from carGameDialog import robCarDialog, askRob1
+from carGameDialog import *
 
 #alla possitioner rob glider till
 ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
@@ -53,14 +53,18 @@ class CarBuildGame(Game):
                "j4":loadImage("junk/j4.png"),
                "j5":loadImage("junk/j5.png"),}
         profiles = { "rob aah":loadImage("profiles/rob_aah.png"),
+                    "rob oh":loadImage("profiles/rob_oh.png"),
+                    "rob annoyed1":loadImage("profiles/rob_annoyed1.png"),
                      "rob angry1":loadImage("profiles/rob_angry1.png"),
                      "rob angry2":loadImage("profiles/rob_angry2.png"),
+                     "rob angry3":loadImage("profiles/rob_angry3.png"),
                      "rob dark":loadImage("profiles/rob_dark.png"),
                      "rob yay":loadImage("profiles/rob_yay.png"),
                      "rob neutral":loadImage("profiles/rob_neutral.png"),
                      "rob huh1":loadImage("profiles/rob_huh1.png"),
                      "rob huh2":loadImage("profiles/rob_huh2.png"),
                      "rob huh3":loadImage("profiles/rob_huh3.png"),
+                     "rob nervouse":loadImage("profiles/rob_nervouse.png"),
                      "rob worry1":loadImage("profiles/rob_worry1.png"),
                      "rob worry2":loadImage("profiles/rob_worry1.png"),
                      "none": loadImage("profiles/none.png")}
@@ -98,6 +102,7 @@ class CarBuildGame(Game):
         self.spawningCarparts = False
         self.carpartSpawnTimer = 0
         self.carpartToThrow = 0
+        self.carpartTalkIdx = 0
     
    
     def spawnCarparts(self, pos, partType,hitboxSize):
@@ -215,10 +220,15 @@ class CarBuildGame(Game):
         if fistLoop:
             self.activeTextIndex = 0
             self.firstLoop = False
-        done = self.handleDialog(askRob1)
+            self.rob.setImage("neutral")
+            if self.carpartTalkIdx >= len(carpartDialog):
+                self.carpartTalkIdx = len(carpartDialog) - 1
+        
+        done = self.handleDialog(carpartDialog[self.carpartTalkIdx])
         if done:
             self.spawningCarparts = True
             self.carpartSpawnTimer = 0
+            self.carpartTalkIdx += 1
             self.currentEvent = "car game"
             
             
@@ -300,6 +310,8 @@ class CarBuildGame(Game):
             self.generalTimer = 0
             self.spawningCarparts = False
             self.carpartSpawnTimer = 0
+            self.carpartTalkIdx = 0
+            self.askForMoreCarparts()
 
         if self.spawningCarparts:  
             self.carpartSpawnTimer += 1

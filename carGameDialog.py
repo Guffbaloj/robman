@@ -13,7 +13,8 @@ class DL:
         self.duration = duration
         self.color = color
         self.special = special
-   
+
+#FÖRSTA DIALOGEN   
 robCarDialog = [
     DL("Ja-sås… vi verkar ha tagit oss till en… uhm", special=["neutral"]),
     DL("Bilfabrik? kanske?", profile="rob huh1"),
@@ -40,14 +41,36 @@ robCarDialog = [
     DL("...", profile= "rob huh2"),
     DL("Bygg fort, innan han upptäcker dörrhandtaget", profile= "rob huh3"),
 ]
+
+#INNAN ROB GER DIG MOTORN
 askrob0 = [DL("Jadu, denna skräphög verkar vara en hög med skräp."),
            DL("Något motorliknande borde det väll finnas?"),
            DL("Ahaa!")]
 
+#INNAN DU FÅR BAKDELEN
 askRob1 = [DL("Sitter motorn?"),
            DL("Fler bitar säger du? Vadå fler bitar? Behövs det fler bitar till en bil än en motor."),
            DL("vänta! Här är några du kan använda!")]
 
-askRob2 = [DL("Vad du ska skifta ämne hela tiden"),
-           DL("")]
+#INNAN DU FÅR FÖREN
+askRob2 = [DL(f"\"Ser snyggt ut\""),
+           DL("ja, eller, det hade kanske en mekanniker sagt"),
+           DL("Själv har jag ingen aning om vad som skulle vara bra"),
+           DL("JAJA! Bitar, förståss!")]
+
+#INNAN DU FÅR eTT HJUL
+askRob3 = [DL("Hjul? Varför ska du ha hjul?"),
+           DL("Till bilen?"),
+           DL("Du måste ha sett några galna bilar i dina dagar"),
+           DL("Jag kan se vad jag kan hitta")]
+
+#HÄR FÅR DU FLER HJUL
+askRob4 = [DL("FLER HJUL?", profile="rob annoyed1"),
+           DL("VET DU HUR JOBBIGT DET ÄR ATT GRÄVA I DENNA HÖG?", profile="rob angry1", special=["angry1"]),
+           DL("Ni människor kräver alltid så mycket!", profile="rob angry2"),
+           DL("Detta är varför...", profile = "rob angry3"),
+           DL("vi borde lägga på ett kol, här är bitarna", profile= "rob nervouse"),
+           DL("Bygg.", profile="rob dark")]
+
+carpartDialog = [askrob0, askRob1, askRob2, askRob3, askRob4]
  #jag vet att dialog egentligen bara är två personer som talar, men lite får ni tåla
