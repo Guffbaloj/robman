@@ -15,13 +15,14 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "start"
+        self.currentEvent = "car game"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
                         "rob in again": self.robIn,
                         "car game": self.carGame,
-                        "asking rob": self.askingRobForParts}
+                        "asking rob": self.askingRobForParts,
+                        "ending": self.endingStart}
         #BILDER OCH FONTER
         self.fonts = {"none": pygame.font.SysFont("arial", TEXT_SIZE),
                       "rob": pygame.font.SysFont("arial", TEXT_SIZE)}
@@ -233,16 +234,20 @@ class CarBuildGame(Game):
             self.firstLoop = False
             self.showTalkButtons = False
             self.rob.setImage("neutral")
-            if self.carpartTalkIdx >= len(carpartDialog):
-                self.carpartTalkIdx = len(carpartDialog) - 1
+
+        if self.carpartTalkIdx < len(carpartDialog):    
+            done = self.handleDialog(carpartDialog[self.carpartTalkIdx])
+            
+            if done:
+                self.spawningCarparts = True
+                self.carpartSpawnTimer = 0
+                self.generalTimer = 0
+                self.carpartTalkIdx += 1
+                self.currentEvent = "car game"
         
-        done = self.handleDialog(carpartDialog[self.carpartTalkIdx])
-        if done:
-            self.spawningCarparts = True
-            self.carpartSpawnTimer = 0
-            self.generalTimer = 0
-            self.carpartTalkIdx += 1
-            self.currentEvent = "car game"
+        else:
+            self.firstLoop = True
+            self.currentEvent = "ending"
             
             
     def robArives(self, firstLoop):
@@ -328,7 +333,9 @@ class CarBuildGame(Game):
             self.junkTimer = 0
         self.junkTimer += 1
         if self.spawningCarparts:  
-            if self.carpartTalkIdx == 4:
+            if self.carpartTalkIdx > 5:
+                pass
+            elif self.carpartTalkIdx == 4:
                 self.spawnTrownCarpart(ROB_THROW_POS, (randrange(-4, 4), -26), "wheel", (80, 80), 0)
                 self.spawningCarparts = False
             else:
@@ -366,7 +373,22 @@ class CarBuildGame(Game):
             self.generalTimer = 0
         #print(self.carparts)
         print(self.builtCar)
+
+    def endingStart(self, firstLoop):
+        if firstLoop:
+            if self.rob in self.rl4:
+                self.rob.scale = 0.4
+                self.rl4.remove(self.rob)
+                self.rl1.append(self.rob)
+                self.rob.flip = True
+
+            self.rob.setPos(ROB_THROW_POS)
+            self.firstLoop 
+            self.showTalkButtons = False
+            self.floorRect.center = (1000, 1000)
         
+        if self.rob in self.rl1:
+            done = self.rob.glideToPos()
     
 
  #self.spawnCarparts((100,100),"engine",(75,75))
