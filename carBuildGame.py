@@ -17,7 +17,7 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "ending"
+        self.currentEvent = "start"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -438,6 +438,7 @@ class CarBuildGame(Game):
             self.rl4.append(self.bonne)
             self.subEvent = "A"
             self.firstLoop = False
+            self.activeTextIndex = 0
         
         if self.subEvent == "A":
             done = self.bonne.glideToPos(CENTER_POS, 1)
@@ -445,8 +446,9 @@ class CarBuildGame(Game):
             if done:
                 self.subEvent = "B"
                 self.activeTextIndex = 0
+        
         elif self.subEvent == "B":
-            done = self.handleDialog()
+            done = self.handleDialog(bonneSnackar)
 
         
     

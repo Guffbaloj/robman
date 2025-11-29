@@ -81,13 +81,13 @@ class Entity:
         newTarget = pygame.math.Vector2(newPos)
         if self.targetPos != newTarget:
             self.targetPos = newTarget
-            dX = newPos[0] - self.pos.x
-            dY = newPos[1] - self.pos.y
+            dX = newPos[0] - (self.pos.x + self.size.x/2)
+            dY = newPos[1] - (self.pos.y + self.size.y/2)
             
             xStep = dX/(duration*FPS)
             yStep = dY/(duration*FPS)
             self.velocity = pygame.math.Vector2(xStep,yStep)
-        if math.dist(self.targetPos,self.pos) < 2:
+        if math.dist(self.targetPos,self.pos) < 100:
             self.setPos(self.targetPos)
             self.targetPos = None
             self.velocity = pygame.math.Vector2(0, 0)
@@ -99,7 +99,7 @@ class Entity:
 
     def setPos(self, newPos):
         self.pos = pygame.math.Vector2(newPos) - self.size/2    
-        self.object.pos = pygame.math.Vector2(newPos) - self.size
+        self.object.pos = pygame.math.Vector2(newPos) - self.size/2
     def setVelocity(self, newVel):
         self.velocity = pygame.math.Vector2(newVel)
         
@@ -108,7 +108,7 @@ class Entity:
     
     def move(self, movement, platforms):
         collided = self.object.move(movement, platforms)
-        self.setPos(self.object.pos + self.size)     
+        self.setPos(self.object.pos + self.size/2)     
         if collided["down"] or collided["up"]:
             self.velocity.y = 0
         if collided["left"] or collided["right"]:
