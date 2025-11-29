@@ -36,6 +36,7 @@ class Game:
         self.background = None
         self.firstLoop = True
         self.currentEvent = "start"
+        self.subEvent = None
 
     def manageDraging(self):
         mousePos = pygame.mouse.get_pos()
@@ -75,6 +76,10 @@ class Game:
             self.dialogText = textwrap.wrap(saidText,CHARACTER_PER_ROW)
 
             self.textTimer += 1
+            
+            if currenCharacter >= len(text) and "no wait" in self.textEvent:
+                self.activeTextIndex += 1
+                self.textTimer = 0
             
             if self.main.justPressed == "space":
                 if currenCharacter < len(text):

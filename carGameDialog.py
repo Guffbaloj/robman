@@ -5,8 +5,9 @@
 #"duration"     {int} Hur långsamt texten sägs
 #"color"      {tuple} Färgen på texten, om ingen så är texten vit.
 #"special"   {string} om något ska hända, typ robs ansiktsuttryck
+
 class DL:
-    def __init__(self, text, source = "rob", duration = 2, color = (255, 255, 255), special = [], profile = "rob neutral"):
+    def __init__(self, text, source = "rob", duration = 3, color = (255, 255, 255), special = [], profile = "rob neutral"):
         self.text = text
         self.source = source
         self.profile = profile
@@ -74,3 +75,22 @@ askRob4 = [DL("FLER HJUL?", profile="rob annoyed1"),
 
 carpartDialog = [askrob0, askRob1, askRob2, askRob3, askRob4]
  #jag vet att dialog egentligen bara är två personer som talar, men lite får ni tåla
+
+carReviewStart = [DL("Är du nöjd med den där bilen?"),
+                  DL("Jag menar den är...", special=["no wait"]),
+                  DL("asså...", special=["no wait"]),
+                  DL("jag förväntade...", special=["no wait"]),
+                  DL("Nej alltså, den är", special=["no wait"]),
+                  DL("den-", special=["no wait"]),
+                  DL("okej FINE!"),
+                  DL("Den är asful"),
+                  DL("jag hade hoppats på något som utstrålar FINNESS,      typ"),
+                  DL("Men detta verkar som att du bara tog en massa skräp och..."),
+                  DL("ehumn..."),
+                  DL("justja..."),
+                  DL("Det var ju det ...vi... gjorde"),
+                  DL("KABLAM!", profile="none", source = "none", special=["worry1"])]
+
+bonneSnackar = [DL("...", profile="bonne angry1", source = "bonne", duration=10, special=["worry1"]),
+                DL("ehehe... de sprang ditåt-", profile = "rob nervouse",duration=4, special=["no wait", "worry1"]),
+                DL("Ni, mina herrar, ligger RISIGT TILL!", profile = "bonne angry2", source = "bonne", duration=2, special=["worry2"])]

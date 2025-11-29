@@ -7,25 +7,30 @@ from carGameDialog import *
 
 #alla possitioner rob glider till
 ROB_SIDE_ENTRANCE = (0, HEIGHT/2)
-ROB_CORNER = CENTER_POS + scaledPos(160, 110)
+ROB_CORNER = CENTER_POS + scaledPos(150, 0)
 ROB_THROW_POS = CENTER_POS + scaledPos(-50, - HEIGHT / 5)
 BUTTON_POS = (WIDTH - 100 * GAME_SCALE, HEIGHT - 80 * GAME_SCALE)
+ROB_TOP_OUT_POS = CENTER_POS + scaledPos(WIDTH, - HEIGHT / 5)
+ROB_BOTTOM_OUT_POS = CENTER_POS + scaledPos(WIDTH, 0)
 CARPARTSS = ["engine", "back", "front", "wheel"]
 class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "car game"
+        self.currentEvent = "ending"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
                         "rob in again": self.robIn,
                         "car game": self.carGame,
                         "asking rob": self.askingRobForParts,
-                        "ending": self.endingStart}
+                        "ending": self.endingStart,
+                        "car critique": self.carReview,
+                        "bonne kommer": self.bonneIn}
         #BILDER OCH FONTER
         self.fonts = {"none": pygame.font.SysFont("arial", TEXT_SIZE),
-                      "rob": pygame.font.SysFont("arial", TEXT_SIZE)}
+                      "rob": pygame.font.SysFont("arial", TEXT_SIZE),
+                      "bonne": pygame.font.SysFont("arial", TEXT_SIZE)}
         carpartImages = {  "back1":loadImage("carparts/back1.png",0.5),
                                 "back2":loadImage("carparts/back2.png",0.5),
                                 "back3":loadImage("carparts/back3.png",0.5),
@@ -47,7 +52,7 @@ class CarBuildGame(Game):
                                 "wheel8":loadImage("carparts/wheel8.png",0.5),
                                 "wheel9":loadImage("carparts/wheel9.png",0.5),} 
         RSM = 0.7
-        robImages = { "worry1": loadImage("robImages/worry1.png", RSM),
+        robImages = {"worry1": loadImage("robImages/worry1.png", RSM),
                      "worry2": loadImage("robImages/worry2.png", RSM),
                      "neutral": loadImage("robImages/neutral.png", RSM),
                      "excited": loadImage("robImages/excited.png", RSM),
@@ -57,6 +62,8 @@ class CarBuildGame(Game):
                      "dig1": loadImage("robImages/dig1.png", RSM),
                      "dig1": loadImage("robImages/dig1.png", RSM),
                      "dig2": loadImage("robImages/dig2.png", RSM)}
+        
+        bonneImages = {"angry": loadImage("andraFilurer/bonne.png")}
         junk ={"j1":loadImage("junk/j1.png"), 
                "j2":loadImage("junk/j2.png"),
                "j3":loadImage("junk/j3.png"),
@@ -77,6 +84,9 @@ class CarBuildGame(Game):
                      "rob nervouse":loadImage("profiles/rob_nervouse.png"),
                      "rob worry1":loadImage("profiles/rob_worry1.png"),
                      "rob worry2":loadImage("profiles/rob_worry1.png"),
+
+                     "bonne angry1": loadImage("profiles/bonne_angry1.png"),
+                     "bonne angry2": loadImage("profiles/bonne_angry2.png"),
                      "none": loadImage("profiles/none.png")}
         
         self.images = {"base":loadImage("gurkman.png"),
@@ -86,6 +96,7 @@ class CarBuildGame(Game):
                        "junk": junk,
                        "background1": loadImage("carFactory.png"),
                        "background2": loadImage("bg1.png"),
+                       "bonne": bonneImages,
                        }
         
         
@@ -96,6 +107,7 @@ class CarBuildGame(Game):
         self.snaprectsList = [] #första är motorn, sista två är hjulen Följer snaprects ordning
         self.rob = Rob(self, (0,400),(100,100))
         self.entities.append(self.rob)
+        self.bonne = None
 
         self.builtCar = {"engine": None, "back":None, "front":None, "wheel1":None, "wheel2":None}
 
@@ -285,7 +297,7 @@ class CarBuildGame(Game):
             self.rob.setPos(CENTER_POS)
             self.rob.setImage("side")
         
-        done = self.rob.glideToPos(CENTER_POS + scaledPos(WIDTH, 0), 2)
+        done = self.rob.glideToPos(ROB_BOTTOM_OUT_POS, 2)
 
         if done:
             self.firstLoop = True
@@ -297,7 +309,7 @@ class CarBuildGame(Game):
             self.rl1.append(self.rob)
             self.rob.flip = True
             self.rob.setImage("side")
-            self.rob.setPos(CENTER_POS + scaledPos(WIDTH, - HEIGHT / 5))
+            self.rob.setPos(ROB_TOP_OUT_POS)
             self.firstLoop = False
         
         done = self.rob.glideToPos(ROB_THROW_POS, 3)
@@ -376,19 +388,67 @@ class CarBuildGame(Game):
 
     def endingStart(self, firstLoop):
         if firstLoop:
+            self.rob.setImage("side")
             if self.rob in self.rl4:
                 self.rob.scale = 0.4
                 self.rl4.remove(self.rob)
                 self.rl1.append(self.rob)
-                self.rob.flip = True
-
+            self.rob.flip = False
             self.rob.setPos(ROB_THROW_POS)
-            self.firstLoop 
+            self.firstLoop = False
             self.showTalkButtons = False
             self.floorRect.center = (1000, 1000)
         
         if self.rob in self.rl1:
-            done = self.rob.glideToPos()
+            done = self.rob.glideToPos(ROB_TOP_OUT_POS, 2)
+            self.rob.flip = False
+            if done:
+                self.rl1.remove(self.rob)
+                self.rl4.append(self.rob)
+                self.rob.scale = 1
+                self.rob.setPos(ROB_BOTTOM_OUT_POS)
+        else:
+            done = self.rob.glideToPos(CENTER_POS, 2)
+            self.rob.flip = True
+            if done:
+                self.firstLoop = True
+                self.currentEvent = "car critique"
+    
+    def carReview(self, firstLoop):
+        print(self.rl4)
+        if firstLoop:
+            if not self.rob in self.rl4:
+                self.rl4.append(self.rob)
+            self.rob.flip = False
+            self.firstLoop = False
+            self.rob.setImage("neutral")
+            self.activeTextIndex = 0
+            self.rob.setPos(CENTER_POS)
+            self.rob.scale = 1
+        done = self.handleDialog(carReviewStart)
+        if done:
+            self.currentEvent = "bonne kommer"
+            self.firstLoop = True
+    
+    def bonneIn(self, firstLoop):
+        if firstLoop:
+            self.bonne = Entity(self, ROB_SIDE_ENTRANCE, (50, 50), "bonne")
+            self.bonne.setImage("angry")
+            self.entities.append(self.bonne)
+            self.rl4.append(self.bonne)
+            self.subEvent = "A"
+            self.firstLoop = False
+        
+        if self.subEvent == "A":
+            done = self.bonne.glideToPos(CENTER_POS, 1)
+            self.rob.glideToPos(ROB_CORNER, 1)
+            if done:
+                self.subEvent = "B"
+                self.activeTextIndex = 0
+        elif self.subEvent == "B":
+            done = self.handleDialog()
+
+        
     
 
  #self.spawnCarparts((100,100),"engine",(75,75))
