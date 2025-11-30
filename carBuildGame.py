@@ -17,7 +17,7 @@ class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "start"
+        self.currentEvent = "bonne kommer"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -63,7 +63,7 @@ class CarBuildGame(Game):
                      "dig1": loadImage("robImages/dig1.png", RSM),
                      "dig2": loadImage("robImages/dig2.png", RSM)}
         
-        bonneImages = {"angry": loadImage("andraFilurer/bonne.png")}
+        bonneImages = {"angry": loadImage("andraFilurer/bonne.png", RSM)}
         junk ={"j1":loadImage("junk/j1.png"), 
                "j2":loadImage("junk/j2.png"),
                "j3":loadImage("junk/j3.png"),
@@ -432,8 +432,10 @@ class CarBuildGame(Game):
     
     def bonneIn(self, firstLoop):
         if firstLoop:
+            self.rob.setPos(CENTER_POS)
             self.bonne = Entity(self, ROB_SIDE_ENTRANCE, (50, 50), "bonne")
             self.bonne.setImage("angry")
+            self.rob.setImage("worry1")
             self.entities.append(self.bonne)
             self.rl4.append(self.bonne)
             self.subEvent = "A"

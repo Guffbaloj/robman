@@ -58,7 +58,7 @@ class Entity:
         self.scale = 1
         self.platforms = []
         self.extra = None
-
+        self.glideVar = [True, True]
     def setCollidables(self, platformList):
         self.platforms = platformList
 
