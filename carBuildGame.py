@@ -13,11 +13,12 @@ BUTTON_POS = (WIDTH - 100 * GAME_SCALE, HEIGHT - 80 * GAME_SCALE)
 ROB_TOP_OUT_POS = CENTER_POS + scaledPos(WIDTH, - HEIGHT / 5)
 ROB_BOTTOM_OUT_POS = CENTER_POS + scaledPos(WIDTH, 0)
 CARPARTSS = ["engine", "back", "front", "wheel"]
+CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
 class CarBuildGame(Game):
     def __init__(self, main, display):
         super().__init__(main, display)        
         self.firstLoop = True
-        self.currentEvent = "bonne kommer"
+        self.currentEvent = "ending"
         self.events = {"start": self.robArives,
                         "rob talk": self.robTalk,
                         "rob glide away": self.robAway,
@@ -50,7 +51,8 @@ class CarBuildGame(Game):
                                 "wheel6":loadImage("carparts/wheel6.png",0.5),
                                 "wheel7":loadImage("carparts/wheel7.png",0.5),
                                 "wheel8":loadImage("carparts/wheel8.png",0.5),
-                                "wheel9":loadImage("carparts/wheel9.png",0.5),} 
+                                "wheel9":loadImage("carparts/wheel9.png",0.5),
+                                "chassi":loadImage("carparts/chassi.png", 0.5)} 
         RSM = 0.7
         robImages = {"worry1": loadImage("robImages/worry1.png", RSM),
                      "worry2": loadImage("robImages/worry2.png", RSM),
@@ -68,7 +70,16 @@ class CarBuildGame(Game):
                "j2":loadImage("junk/j2.png"),
                "j3":loadImage("junk/j3.png"),
                "j4":loadImage("junk/j4.png"),
-               "j5":loadImage("junk/j5.png"),}
+               "j5":loadImage("junk/j5.png"),
+
+               "j6":loadImage("junk/j6.png", 0.5),
+               "j7":loadImage("junk/j7.png", 0.5),
+               "j8":loadImage("junk/j8.png", 0.5),
+               "j9":loadImage("junk/j9.png", 0.5),
+               "j10":loadImage("junk/j10.png", 0.5),
+               "j11":loadImage("junk/j11.png", 0.5),
+               "j12":loadImage("junk/j12.png", 0.5),
+               "j13":loadImage("junk/j13.png", 0.5),}
         profiles = { "rob aah":loadImage("profiles/rob_aah.png"),
                     "rob oh":loadImage("profiles/rob_oh.png"),
                     "rob annoyed1":loadImage("profiles/rob_annoyed1.png"),
@@ -108,7 +119,10 @@ class CarBuildGame(Game):
         self.rob = Rob(self, (0,400),(100,100))
         self.entities.append(self.rob)
         self.bonne = None
-
+        self.chassi = Entity(self, CAR_CENTER- scaledPos(20, 0), (20,20), "carpart")
+        self.chassi.setImage("chassi")
+        self.entities.append(self.chassi)
+        
         self.builtCar = {"engine": None, "back":None, "front":None, "wheel1":None, "wheel2":None}
 
         #SETUP
@@ -116,6 +130,7 @@ class CarBuildGame(Game):
         self.background2 = Background(self.images["background2"])
         self.rl0.append(self.background1)
         self.rl2.append(self.background2)
+        self.rl3.append(self.chassi)
         self.rl4.append(self.rob)
         
         self.floorRect = makeRect(CENTER_POS + scaledPos(0, HEIGHT / 2), (WIDTH, 20 * GAME_SCALE))
@@ -327,7 +342,7 @@ class CarBuildGame(Game):
                 self.rob.flip = True
 
             self.rob.setPos(ROB_THROW_POS)
-            CAR_CENTER = CENTER_POS  + scaledPos(-10, +50)
+            
             self.carparts = {"engine":[],"back":[],"front":[],"wheel":[]}
             self.makeSnaprects(CAR_CENTER)
             
@@ -374,7 +389,7 @@ class CarBuildGame(Game):
                     carpart.scale = 1
                     self.builtCar[carpartType] = carpart.imageKey
         if self.junkTimer % 20 == 0:
-            self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 5))
+            self.throwJunk(self.rob.pos + (randrange(-50, -40), 0), (randrange(10, 15), randrange(-8, -5)),randrange(0, 13))
         
 
         self.generalTimer = self.generalTimer + 0.10
