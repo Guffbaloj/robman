@@ -1,5 +1,6 @@
 import pygame
 from carBuildGame import CarBuildGame
+from fleeingGame import FleeingGame
 from mainMenu import MainMenu
 from utils import *
 #import cProfile as profile
@@ -11,7 +12,8 @@ class Main:
         self.images = {"base":loadImage("gurkman.png")}
         
         self.scenes = {"main menu":  MainMenu,
-                       "car game": CarBuildGame}
+                       "car game": CarBuildGame,
+                       "flee game": FleeingGame}
         
         self.currentScene = None
         
