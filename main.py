@@ -22,7 +22,7 @@ class Main:
         self.clock = pygame.time.Clock()
         self.justPressed = None
         self.justUp = None
-        self.loadNewScene("main menu")
+        self.loadNewScene("flee game")
     
     def loadNewScene(self, newScene):
         self.currentScene = self.scenes[newScene](self, self.window)

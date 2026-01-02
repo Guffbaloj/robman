@@ -94,4 +94,5 @@ carReviewStart = [DL("Är du nöjd med den där bilen?"),
 bonneSnackar = [DL("...", profile="bonne angry1", source = "bonne", duration=10, special=["worry1"]),
                 DL("ehehe... de sprang ditåt-", profile = "rob nervouse",duration=4, special=["no wait", "worry1"]),
                 DL("Ni, mina herrar, ligger RISIGT TILL!", profile = "bonne angry2", source = "bonne", duration=2, special=["worry2"]),
-                DL("*gulp*",profile = "rob nervouse",duration=4)]
+                DL("*gulp*",profile = "rob nervouse",duration=4),
+                DL("SKUBBA SOM ATTAN!", profile="rob aah")]

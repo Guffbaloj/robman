@@ -58,6 +58,8 @@ class Entity:
         self.scale = 1
         self.platforms = []
         self.extra = None
+        self.onPress = None
+        self.onHover = None
         self.glideVar = [True, True]
     def setCollidables(self, platformList):
         self.platforms = platformList
@@ -106,7 +108,7 @@ class Entity:
     def setAcceleration(self, newAcc):
         self.acceleration = pygame.math.Vector2(newAcc)
     
-    def move(self, movement, platforms):
+    def move(self, movement, platforms = []):
         collided = self.object.move(movement, platforms)
         self.setPos(self.object.pos + self.size/2)     
         if collided["down"] or collided["up"]:
@@ -114,18 +116,20 @@ class Entity:
         if collided["left"] or collided["right"]:
             self.velocity.x = 0
     
-    def onPress(self, mousePos):
-        pass
-    def onHover(self, mousePos):
-        pass
+    def setOnPress(self, function):
+        self.onPress = function
+    def setOnHover(self, function):
+        self.setOnHover = function
 
     def checkIfPressed(self):
         mousePos = pygame.mouse.get_pos()
         if self.getRect().collidepoint(mousePos):
-            self.onHover(mousePos)
+            if self.onHover:
+                self.onHover(mousePos)
             if self.game.main.justPressed == "mouse1":
                 self.wasPressed = True
-                self.onPress(mousePos)
+                if self.onPress:
+                    self.onPress(mousePos)
     def handleTextEvents(self, events):
         ...
     def update(self):

@@ -37,7 +37,12 @@ class Game:
         self.firstLoop = True
         self.currentEvent = "start"
         self.subEvent = None
-
+    def RLHeightInsert(self, object, rl):
+        for i in range(len(rl)):
+            if object.getImageRect().bottom < rl[i].getImageRect().bottom:
+                rl.insert(i, object)
+                return
+        rl.append(object)
     def manageDraging(self):
         mousePos = pygame.mouse.get_pos()
         mouseDown = self.main.inputs["mouseDown"]
